@@ -8,7 +8,7 @@ import (
 )
 
 func InitDB(c echo.Context) error {
-	_, err := database.InitDB()
+	err := database.InitDB()
 	if err != nil {
 		return c.String(http.StatusInternalServerError, "Failed to initialize database: "+err.Error())
 	}

@@ -7,14 +7,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func InitDB() (*sql.DB, error) {
-	// Connect to the SQLite database
-	db, err := sql.Open("sqlite3", "database.db")
-	if err != nil {
-		return nil, err
-	}
-
-	// Create a table if it doesn't exist
+func InitDB() error {
 	createTableSQL := `
 	CREATE TABLE IF NOT EXISTS user_stats (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -44,11 +37,45 @@ func InitDB() (*sql.DB, error) {
     overall_rank INTEGER DEFAULT 0,
     collected_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	);`
-	_, err = db.Exec(createTableSQL)
-	if err != nil {
-		return nil, err
-	}
+
+	ExecuteQuery(createTableSQL, []interface{}{})
 
 	log.Println("Database initialized successfully")
-	return db, nil
+	return nil
+}
+
+func ExecuteQuery(query string, args []interface{}) []map[string]interface{} {
+	db, err := sql.Open("sqlite3", "database.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	rows, err := db.Query(query, args...)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	var results []map[string]interface{}
+	for rows.Next() {
+		columns, _ := rows.Columns()
+		values := make([]interface{}, len(columns))
+		valuePtrs := make([]interface{}, len(columns))
+
+		for i := range values {
+			valuePtrs[i] = &values[i]
+		}
+
+		if err := rows.Scan(valuePtrs...); err != nil {
+			log.Fatal(err)
+		}
+
+		row := make(map[string]interface{})
+		for i, col := range columns {
+			row[col] = values[i]
+		}
+		results = append(results, row)
+	}
+
+	return results
 }

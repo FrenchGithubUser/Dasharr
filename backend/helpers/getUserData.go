@@ -22,7 +22,7 @@ func GetUserData(trackerConfig gjson.Result) map[string]interface{} {
 		req, _ := http.NewRequest("GET", trackerInfoJson.Get("base_url").Str, nil)
 		trackerType := trackerInfoJson.Get("tracker_type").Str
 		if trackerType == "gazelle" {
-			req.Header.Add(trackerInfoJson.Get("auth_header").Str, trackerConfig.Get("auth.api_key").Str)
+			req.Header.Add(trackerInfoJson.Get("auth_header").Str, trackerConfig.Get("fillable.api_key").Str)
 			updatedUrl, _ := url.Parse(req.URL.String() + trackerConfig.Get("user_id").String())
 			req.URL = updatedUrl
 		}
