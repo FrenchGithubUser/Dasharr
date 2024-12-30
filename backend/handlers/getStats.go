@@ -32,7 +32,6 @@ func GetStats(c echo.Context) error {
 		log.Fatalf("Query failed: %s", err)
 	}
 	defer rows.Close()
-
 	jsonRows, _ := helpers.RowsToJSON(rows)
 
 	return c.JSON(http.StatusOK, jsonRows)
