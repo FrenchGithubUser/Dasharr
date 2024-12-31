@@ -1,5 +1,8 @@
 /* color palette from <https://github.com/vuejs/theme> */
 :root {
+
+  --main-color: rgba(0,41,118,0.07);
+
   --vt-c-white: #ffffff;
   --vt-c-white-soft: #f8f8f8;
   --vt-c-white-mute: #f2f2f2;

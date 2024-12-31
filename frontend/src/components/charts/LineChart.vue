@@ -3,8 +3,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
-import VueApexCharts from 'vue3-apexcharts';
+import { defineComponent, ref } from 'vue'
+import VueApexCharts from 'vue3-apexcharts'
 
 export default defineComponent({
   name: 'LineChart',
@@ -14,10 +14,10 @@ export default defineComponent({
   setup() {
     const series = ref([
       {
-        name: "Desktops",
+        name: 'Desktops',
         data: [10, 41, 35, 51, 49, 62, 69, 91, 148],
       },
-    ]);
+    ])
 
     const chartOptions = ref({
       chart: {
@@ -46,9 +46,9 @@ export default defineComponent({
       xaxis: {
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
       },
-    });
+    })
 
-    return { series, chartOptions };
+    return { series, chartOptions }
   },
-});
+})
 </script>

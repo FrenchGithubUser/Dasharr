@@ -1,1 +1,12 @@
 @import './base.css';
+
+.widget{
+    padding: 10px;
+    border-radius: .5em;
+    box-shadow: 0px 0px 115px -88px var(--main-color) inset,
+    0px 2px 4px 0px rgba(0,0,0,0.07),
+    0px 4px 8px 0px rgba(0,0,0,0.07),
+    0px 8px 16px 0px rgba(0,0,0,0.07),
+    0px 16px 32px 0px rgba(0,0,0,0.07),
+    0px 32px 64px 0px rgba(0,0,0,0.07);
+}
