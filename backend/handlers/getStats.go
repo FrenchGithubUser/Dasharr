@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"backend/database"
+	"backend/helpers"
 	"net/http"
 	"strings"
 
@@ -27,7 +28,7 @@ func GetStats(c echo.Context) error {
 	for _, id := range trackerIds {
 		args = append(args, id)
 	}
-	allStats := database.ExecuteQuery(allStatsQuery, args)
+	allStats := helpers.RemoveNilEntries(database.ExecuteQuery(allStatsQuery, args))
 
 	allResults["all"] = allStats
 
@@ -45,10 +46,11 @@ func GetStats(c echo.Context) error {
 		(SELECT forum_posts FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at DESC LIMIT 1) - (SELECT forum_posts FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at ASC LIMIT 1) AS forum_posts
 		FROM user_stats u
 		WHERE collected_at BETWEEN ? AND ?
+		AND tracker_id IN (?` + strings.Repeat(", ?", len(trackerIds)-1) + `)
 		GROUP BY tracker_id;
 	`
 
-	perTrackerSummaryStats := database.ExecuteQuery(summaryQuery, []interface{}{date_from, date_to})
+	perTrackerSummaryStats := helpers.RemoveNilEntries(database.ExecuteQuery(summaryQuery, args))
 
 	allResults["per_tracker_summary"] = perTrackerSummaryStats
 

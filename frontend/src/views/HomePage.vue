@@ -7,20 +7,24 @@
       </FloatLabel>
       <Button type="button" label="Get Stats" :loading="loading" @click="fetchStats()" />
     </div>
-    <div class="counters section">
-      <ValueCounter :value="stats?.total_summary.downloaded" :duration="1000" unit="GiB" :data="true" meaning="downloaded" />
-      <ValueCounter :value="stats?.total_summary.uploaded" :duration="1000" unit="GiB" :data="true" meaning="uploaded" />
-      <ValueCounter :value="stats?.total_summary.seeding" :duration="1000" unit="torrents" :data="false" meaning="seeding" />
+    <div class="global-counters section">
+      <ValueCounter :value="stats ? stats.total_summary.downloaded : 0" :duration="1000" unit="GiB" meaning="downloaded" />
+      <ValueCounter :value="stats ? stats.total_summary.uploaded : 0" :duration="1000" unit="GiB" meaning="uploaded" />
+      <ValueCounter :value="stats ? stats.total_summary.seeding : 0" :duration="1000" unit="torrents" meaning="seeding" />
+    </div>
+    <div class="section tracker-details">
+      <TrackerCard v-for="tracker in stats?.per_tracker_summary" :key="tracker.tracker_id" :stats="tracker" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import ValueCounter from '@/components/misc/ValueCounter.vue'
+import ValueCounter from '@/components/charts/ValueCounter.vue'
 import DatePicker from 'primevue/datepicker'
 import { Button, FloatLabel } from 'primevue'
 import { useApi } from '../composables/useApi'
 import { ref, onMounted } from 'vue'
+import TrackerCard from '@/components/charts/TrackerCard.vue'
 
 export default {
   components: {
@@ -29,6 +33,7 @@ export default {
     FloatLabel,
     // eslint-disable-next-line vue/no-reserved-component-names
     Button,
+    TrackerCard,
   },
   data() {
     return {
@@ -40,7 +45,7 @@ export default {
     const stats = ref(null)
     const loading = ref(true)
     const selectedPeriod = ref([new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), new Date()])
-    const selectedTrackers = ref([{ id: 1 }, { id: 2 }, { id: 3 }])
+    const selectedTrackers = ref([{ id: 0 }, { id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }])
 
     const fetchStats = () => {
       const date_from = selectedPeriod.value[0].toISOString().split('T')[0]
@@ -68,5 +73,11 @@ export default {
   display: flex;
   justify-content: space-around;
   margin-bottom: 1.5em;
+}
+.tracker-details {
+  flex-direction: column;
+}
+.tracker-card {
+  margin: 1em 0;
 }
 </style>
