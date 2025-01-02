@@ -13,8 +13,10 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@primevue/themes": "^4.2.5",
     "apexcharts": "^4.3.0",
     "axios": "^1.7.9",
+    "primevue": "^4.2.5",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0",
     "vue3-apexcharts": "^1.8.0"

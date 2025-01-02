@@ -60,7 +60,7 @@ func GetStats(c echo.Context) error {
 				case float64:
 					totalSummaryStats[k] += num
 				case int64:
-					totalSummaryStats[k] += float64(num) // Convert int64 to float64
+					totalSummaryStats[k] += float64(num)
 				}
 			}
 		}

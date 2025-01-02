@@ -1,6 +1,7 @@
 package database
 
 import (
+	"backend/helpers"
 	"database/sql"
 	"log"
 
@@ -72,7 +73,11 @@ func ExecuteQuery(query string, args []interface{}) []map[string]interface{} {
 
 		row := make(map[string]interface{})
 		for i, col := range columns {
-			row[col] = values[i]
+			if col == "uploaded" || col == "downloaded" {
+				row[col] = helpers.ConvertBitsToGiB(values[i])
+			} else {
+				row[col] = values[i]
+			}
 		}
 		results = append(results, row)
 	}
