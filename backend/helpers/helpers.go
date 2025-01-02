@@ -5,13 +5,16 @@ import (
 	"math"
 )
 
-func ConvertBitsToGiB(bits any) float64 {
-	switch b := bits.(type) {
-	case float64:
-		return b / (8 * math.Pow(2, 30))
-	case int64:
-		return float64(b) / (8 * math.Pow(2, 30))
-	default:
+func BitsToGiB(bits int64) float64 {
+	return float64(bits) / (8 * math.Pow(2, 30))
+}
+
+func AnyUnitToBits(value float64, unit string) int64 {
+	if unit == "GiB" {
+		return int64(value * 1024 * 1024 * 1024 * 8)
+	} else if unit == "TiB" {
+		return int64(value * 1024 * 1024 * 1024 * 1024 * 8)
+	} else {
 		return 0
 	}
 }
@@ -29,7 +32,7 @@ func ProcessDataTransferUnits(results interface{}) []map[string]interface{} {
 				updated[k] = ProcessDataTransferUnits(v)
 			default:
 				if k == "uploaded" || k == "downloaded" {
-					updated[k] = ConvertBitsToGiB(v)
+					updated[k] = BitsToGiB(v.(int64))
 				} else {
 					updated[k] = v
 				}
@@ -46,7 +49,6 @@ func ProcessDataTransferUnits(results interface{}) []map[string]interface{} {
 		}
 		return newData
 	}
-	// fmt.Println(results.([]map[string]interface{}))
 
 	// Handle other types or return an error if unexpected
 	return nil

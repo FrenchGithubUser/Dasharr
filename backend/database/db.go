@@ -74,7 +74,12 @@ func ExecuteQuery(query string, args []interface{}) []map[string]interface{} {
 		row := make(map[string]interface{})
 		for i, col := range columns {
 			if col == "uploaded" || col == "downloaded" {
-				row[col] = helpers.ConvertBitsToGiB(values[i])
+				switch values[i].(type) {
+				case int64:
+					row[col] = helpers.BitsToGiB(values[i].(int64))
+				case float64:
+					row[col] = helpers.BitsToGiB(int64(values[i].(float64)))
+				}
 			} else {
 				row[col] = values[i]
 			}
