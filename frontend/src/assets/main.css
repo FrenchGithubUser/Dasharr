@@ -11,3 +11,7 @@
     0px 16px 32px 0px rgba(0, 0, 0, 0.07),
     0px 32px 64px 0px rgba(0, 0, 0, 0.07);
 }
+
+.p-datepicker-input {
+  text-align: center;
+}
