@@ -17,6 +17,7 @@ func main() {
 
 	e.GET("/initdb", handlers.InitDB)
 	e.GET("/update", handlers.Update)
+	e.GET("/updateProwlarr", handlers.UpdateProwlarr)
 	e.GET("/stats", handlers.GetStats)
 	e.GET("/userConfig", handlers.GetUserConfig)
 	e.Logger.Fatal(e.Start(":1323"))

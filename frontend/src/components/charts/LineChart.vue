@@ -1,6 +1,5 @@
 <template>
   <apexchart height="350" ref="chart" :options="chartOptions" :series="series"></apexchart>
-  {{ xaxis }}
 </template>
 
 <script lang="ts">
