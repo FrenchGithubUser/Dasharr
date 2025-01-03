@@ -1,13 +1,23 @@
 <template>
   <Card class="tracker-card">
     <template #content>
-      <img :src="'/images/' + statsSummary.tracker_id + '.png'" width="200px" class="logo" />
-      <div class="counters">
-        <ValueCounter v-for="(stat, label) in statsToDisplay" :key="label" :value="stat" :meaning="label" :unit="['uploaded_amount', 'downloaded_amount'].indexOf(label) > -1 ? 'GiB' : ''" :duration="500" />
+      <div class="logo-wrapper">
+        <img :src="'/images/' + statsSummary.tracker_id + '.png'" width="250px" class="logo" />
       </div>
-      <div class="graphs">
-        <LineChart :series="uploadDetail.series" :xaxis="uploadDetail.xaxis" />
-      </div>
+      <Card>
+        <template #content>
+          <div class="explanation">Amounts increase during the selected period</div>
+          <div class="counters">
+            <ValueCounter v-for="(stat, label) in statsToDisplay" :key="label" :value="stat" :meaning="label" :unit="['uploaded_amount', 'downloaded_amount'].indexOf(label) > -1 ? 'GiB' : ''" :duration="500" />
+          </div>
+        </template>
+      </Card>
+      <Card class="graphs">
+        <template #content>
+          <div class="explanation">Amounts evolution during the selected period</div>
+          <LineChart :series="uploadDetail.series" :xaxis="uploadDetail.xaxis" />
+        </template>
+      </Card>
     </template>
   </Card>
 </template>
@@ -49,11 +59,21 @@ export default {
 </script>
 
 <style scoped>
+.logo-wrapper {
+  text-align: center;
+}
+.logo {
+  margin-bottom: 10px;
+}
 .counters {
   display: flex;
   justify-content: space-around;
 }
-.logo {
+.explanation {
   margin-bottom: 10px;
+  font-weight: bold;
+}
+.graphs {
+  margin-top: 20px;
 }
 </style>

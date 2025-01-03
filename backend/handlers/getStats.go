@@ -42,21 +42,37 @@ func GetStats(c echo.Context) error {
 	summaryQuery := `
 		SELECT
 	    tracker_id,
-	    MIN(collected_at) AS earliest_date,
-	    MAX(collected_at) AS latest_date,
-		(SELECT downloaded_amount FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at DESC LIMIT 1) - (SELECT downloaded_amount FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at ASC LIMIT 1) AS downloaded_amount,
-	    (SELECT uploaded_amount FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at DESC LIMIT 1) - (SELECT uploaded_amount FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at ASC LIMIT 1) AS uploaded_amount, 
-		(SELECT snatched FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at DESC LIMIT 1) - (SELECT snatched FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at ASC LIMIT 1) AS snatched, 
-		(SELECT seeding FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at DESC LIMIT 1) - (SELECT seeding FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at ASC LIMIT 1) AS seeding, 
-		(SELECT ratio FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at DESC LIMIT 1) - (SELECT ratio FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at ASC LIMIT 1) AS ratio, 
-		(SELECT torrent_comments FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at DESC LIMIT 1) - (SELECT torrent_comments FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at ASC LIMIT 1) AS torrent_comments, 
-		(SELECT forum_posts FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at DESC LIMIT 1) - (SELECT forum_posts FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at ASC LIMIT 1) AS forum_posts
+		(SELECT downloaded_amount FROM user_stats WHERE tracker_id = u.tracker_id AND collected_at BETWEEN ? AND ? ORDER BY collected_at DESC LIMIT 1) - 
+		(SELECT downloaded_amount FROM user_stats WHERE tracker_id = u.tracker_id AND collected_at BETWEEN ? AND ? ORDER BY collected_at ASC LIMIT 1) AS downloaded_amount,
+
+	    (SELECT uploaded_amount FROM user_stats WHERE tracker_id = u.tracker_id AND collected_at BETWEEN ? AND ? ORDER BY collected_at DESC LIMIT 1) - 
+		(SELECT uploaded_amount FROM user_stats WHERE tracker_id = u.tracker_id AND collected_at BETWEEN ? AND ? ORDER BY collected_at ASC LIMIT 1) AS uploaded_amount, 
+
+		(SELECT snatched FROM user_stats WHERE tracker_id = u.tracker_id AND collected_at BETWEEN ? AND ? ORDER BY collected_at DESC LIMIT 1) - 
+		(SELECT snatched FROM user_stats WHERE tracker_id = u.tracker_id AND collected_at BETWEEN ? AND ? ORDER BY collected_at ASC LIMIT 1) AS snatched, 
+
+		(SELECT seeding FROM user_stats WHERE tracker_id = u.tracker_id AND collected_at BETWEEN ? AND ? ORDER BY collected_at DESC LIMIT 1) -
+		(SELECT seeding FROM user_stats WHERE tracker_id = u.tracker_id AND collected_at BETWEEN ? AND ? ORDER BY collected_at ASC LIMIT 1) AS seeding, 
+
+		(SELECT ratio FROM user_stats WHERE tracker_id = u.tracker_id AND collected_at BETWEEN ? AND ? ORDER BY collected_at DESC LIMIT 1) - 
+		(SELECT ratio FROM user_stats WHERE tracker_id = u.tracker_id AND collected_at BETWEEN ? AND ? ORDER BY collected_at ASC LIMIT 1) AS ratio, 
+
+		(SELECT torrent_comments FROM user_stats WHERE tracker_id = u.tracker_id AND collected_at BETWEEN ? AND ? ORDER BY collected_at DESC LIMIT 1) -
+		(SELECT torrent_comments FROM user_stats WHERE tracker_id = u.tracker_id AND collected_at BETWEEN ? AND ? ORDER BY collected_at ASC LIMIT 1) AS torrent_comments, 
+
+		(SELECT forum_posts FROM user_stats WHERE tracker_id = u.tracker_id AND collected_at BETWEEN ? AND ? ORDER BY collected_at DESC LIMIT 1) - 
+		(SELECT forum_posts FROM user_stats WHERE tracker_id = u.tracker_id AND collected_at BETWEEN ? AND ? ORDER BY collected_at ASC LIMIT 1) AS forum_posts
+
 		FROM user_stats u
 		WHERE collected_at BETWEEN ? AND ?
 		AND tracker_id IN (?` + strings.Repeat(", ?", len(trackerIds)-1) + `)
 		GROUP BY tracker_id;
 	`
-	args = []interface{}{date_from, date_to}
+	amount_dates_required := 15
+	args = []interface{}{}
+	for i := 0; i < amount_dates_required; i++ {
+		args = append(args, date_from, date_to)
+	}
 	for _, id := range trackerIds {
 		args = append(args, id)
 	}
