@@ -17,8 +17,15 @@ func GetStats(c echo.Context) error {
 
 	allResults := make(map[string]interface{})
 
+	// allStatsQuery := `
+	// SELECT *, DATE(collected_at) AS day, MAX(collected_at) AS latest_collected_at
+	// FROM user_stats
+	// WHERE collected_at BETWEEN ? AND ?
+	// AND tracker_id IN (?` + strings.Repeat(", ?", len(trackerIds)-1) + `)
+	// GROUP BY tracker_id, day;
+	// `
 	allStatsQuery := `
-    SELECT *
+	SELECT *
     FROM user_stats
     WHERE collected_at BETWEEN ? AND ?
       AND tracker_id IN (?` + strings.Repeat(", ?", len(trackerIds)-1) + `);
@@ -37,8 +44,8 @@ func GetStats(c echo.Context) error {
 	    tracker_id,
 	    MIN(collected_at) AS earliest_date,
 	    MAX(collected_at) AS latest_date,
-		(SELECT downloaded_amount FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at DESC LIMIT 1) - (SELECT downloaded_amount FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at ASC LIMIT 1) AS downloaded,
-	    (SELECT uploaded_amount FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at DESC LIMIT 1) - (SELECT uploaded_amount FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at ASC LIMIT 1) AS uploaded, 
+		(SELECT downloaded_amount FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at DESC LIMIT 1) - (SELECT downloaded_amount FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at ASC LIMIT 1) AS downloaded_amount,
+	    (SELECT uploaded_amount FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at DESC LIMIT 1) - (SELECT uploaded_amount FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at ASC LIMIT 1) AS uploaded_amount, 
 		(SELECT snatched FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at DESC LIMIT 1) - (SELECT snatched FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at ASC LIMIT 1) AS snatched, 
 		(SELECT seeding FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at DESC LIMIT 1) - (SELECT seeding FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at ASC LIMIT 1) AS seeding, 
 		(SELECT ratio FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at DESC LIMIT 1) - (SELECT ratio FROM user_stats WHERE tracker_id = u.tracker_id ORDER BY collected_at ASC LIMIT 1) AS ratio, 
@@ -49,6 +56,10 @@ func GetStats(c echo.Context) error {
 		AND tracker_id IN (?` + strings.Repeat(", ?", len(trackerIds)-1) + `)
 		GROUP BY tracker_id;
 	`
+	args = []interface{}{date_from, date_to}
+	for _, id := range trackerIds {
+		args = append(args, id)
+	}
 
 	perTrackerSummaryStats := helpers.RemoveNilEntries(database.ExecuteQuery(summaryQuery, args))
 

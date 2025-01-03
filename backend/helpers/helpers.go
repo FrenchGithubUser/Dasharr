@@ -4,15 +4,15 @@ import (
 	"math"
 )
 
-func BitsToGiB(bits int64) float64 {
-	return float64(bits) / (8 * math.Pow(2, 30))
+func BytesToGiB(bits int64) float64 {
+	return float64(bits) / (math.Pow(2, 30))
 }
 
-func AnyUnitToBits(value float64, unit string) int64 {
+func AnyUnitToBytes(value float64, unit string) int64 {
 	if unit == "GiB" {
-		return int64(value * 1024 * 1024 * 1024 * 8)
+		return int64(value * math.Pow(2, 30))
 	} else if unit == "TiB" {
-		return int64(value * 1024 * 1024 * 1024 * 1024 * 8)
+		return int64(value * math.Pow(2, 40))
 	} else {
 		return 0
 	}
@@ -47,7 +47,7 @@ func RemoveNilEntries(data []map[string]interface{}) []map[string]interface{} {
 // 				updated[k] = ProcessQueryResults(v)
 // 			default:
 // 				if k == "uploaded" || k == "downloaded" {
-// 					updated[k] = BitsToGiB(v.(int64))
+// 					updated[k] = BytesToGiB(v.(int64))
 // 				} else {
 // 					updated[k] = v
 // 				}

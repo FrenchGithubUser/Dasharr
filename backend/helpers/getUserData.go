@@ -36,32 +36,38 @@ func GetUserData(trackerConfig gjson.Result) map[string]interface{} {
 			log.Fatalf("Failed to make request: %v", err)
 		}
 		defer resp.Body.Close()
-		body, _ := io.ReadAll(resp.Body)
-		results = gjson.Parse(string(body))
-		if trackerType == "gazelle" {
-			results = results.Get("response")
-		} else if trackerType == "unit3d" {
-			re := regexp.MustCompile(`^([\d\.]+)\s?(GiB|MiB|TiB)$`)
+		if resp.Status == "200 OK" {
 
-			uploadRegexResult := re.FindStringSubmatch(results.Get("uploaded").Str)
-			cleanUpload, _ := strconv.ParseFloat(uploadRegexResult[1], 64)
-			edited_results, _ := sjson.Set(string(body), "uploaded", AnyUnitToBits(cleanUpload, uploadRegexResult[2]))
-			downloadRegexResult := re.FindStringSubmatch(results.Get("downloaded").Str)
-			cleanDownload, _ := strconv.ParseFloat(downloadRegexResult[1], 64)
-			edited_results, _ = sjson.Set(edited_results, "downloaded", AnyUnitToBits(cleanDownload, downloadRegexResult[2]))
-			bufferRegexResult := re.FindStringSubmatch(results.Get("buffer").Str)
-			cleanBuffer, _ := strconv.ParseFloat(bufferRegexResult[1], 64)
-			edited_results, _ = sjson.Set(edited_results, "buffer", AnyUnitToBits(cleanBuffer, downloadRegexResult[2]))
+			body, _ := io.ReadAll(resp.Body)
+			results = gjson.Parse(string(body))
+			if trackerType == "gazelle" {
+				results = results.Get("response")
+			} else if trackerType == "unit3d" {
+				re := regexp.MustCompile(`^([\d\.]+)\s?(GiB|MiB|TiB)$`)
 
-			results = gjson.Parse(edited_results)
+				uploadRegexResult := re.FindStringSubmatch(results.Get("uploaded").Str)
+				cleanUpload, _ := strconv.ParseFloat(uploadRegexResult[1], 64)
+				edited_results, _ := sjson.Set(string(body), "uploaded", AnyUnitToBytes(cleanUpload, uploadRegexResult[2]))
+				downloadRegexResult := re.FindStringSubmatch(results.Get("downloaded").Str)
+				cleanDownload, _ := strconv.ParseFloat(downloadRegexResult[1], 64)
+				edited_results, _ = sjson.Set(edited_results, "downloaded", AnyUnitToBytes(cleanDownload, downloadRegexResult[2]))
+				bufferRegexResult := re.FindStringSubmatch(results.Get("buffer").Str)
+				cleanBuffer, _ := strconv.ParseFloat(bufferRegexResult[1], 64)
+				edited_results, _ = sjson.Set(edited_results, "buffer", AnyUnitToBytes(cleanBuffer, downloadRegexResult[2]))
+
+				results = gjson.Parse(edited_results)
+			}
 		}
+
+		mappedResults := make(map[string]interface{})
+		trackerInfoJson.Get("stats_keys").ForEach(func(key, value gjson.Result) bool {
+			mappedResults[value.String()] = results.Get(key.String()).Value()
+			return true
+		})
+
+		return mappedResults
+	} else {
+		fmt.Printf("Tracker %s did not reply with status 200 OK, skipping.", trackerConfig.Get("tracker_name"))
+		return map[string]interface{}{}
 	}
-
-	mappedResults := make(map[string]interface{})
-	trackerInfoJson.Get("stats_keys").ForEach(func(key, value gjson.Result) bool {
-		mappedResults[value.String()] = results.Get(key.String()).Value()
-		return true
-	})
-
-	return mappedResults
 }

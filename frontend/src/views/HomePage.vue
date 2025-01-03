@@ -8,12 +8,12 @@
       <Button type="button" label="Get Stats" :loading="loading" @click="fetchStats()" />
     </div>
     <div class="global-counters section">
-      <ValueCounter :value="stats ? stats.total_summary.downloaded : 0" :duration="1000" unit="GiB" meaning="downloaded" />
-      <ValueCounter :value="stats ? stats.total_summary.uploaded : 0" :duration="1000" unit="GiB" meaning="uploaded" />
+      <ValueCounter :value="stats ? stats.total_summary.downloaded_amount : 0" :duration="1000" unit="GiB" meaning="downloaded" />
+      <ValueCounter :value="stats ? stats.total_summary.uploaded_amount : 0" :duration="1000" unit="GiB" meaning="uploaded" />
       <ValueCounter :value="stats ? stats.total_summary.seeding : 0" :duration="1000" unit="torrents" meaning="seeding" />
     </div>
     <div class="section tracker-details">
-      <TrackerCard v-for="tracker in stats?.per_tracker_summary" :key="tracker.tracker_id" :stats="tracker" />
+      <TrackerCard v-for="tracker in stats?.per_tracker_summary" :key="tracker.tracker_id" :statsSummary="tracker" :statsDetailed="detailedStats(tracker.tracker_id)" />
     </div>
   </div>
 </template>
@@ -40,6 +40,11 @@ export default {
       loading: false,
     }
   },
+  methods: {
+    detailedStats(tracker_id) {
+      return this.stats ? this.stats.all.filter((stat: object) => stat.tracker_id === tracker_id) : []
+    },
+  },
   setup() {
     const { getUserStats } = useApi()
     const stats = ref(null)
@@ -48,8 +53,8 @@ export default {
     const selectedTrackers = ref([{ id: 0 }, { id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }])
 
     const fetchStats = () => {
-      const date_from = selectedPeriod.value[0].toISOString().split('T')[0]
-      const date_to = selectedPeriod.value[1].toISOString().split('T')[0]
+      const date_from = selectedPeriod.value[0].toISOString().split('T')[0] + ' 00:00:00'
+      const date_to = selectedPeriod.value[1].toISOString().split('T')[0] + ' 23:59:59'
       const tracker_ids = selectedTrackers.value.map((tracker) => tracker.id).join(',')
       getUserStats(date_from, date_to, tracker_ids)
         .then((res) => (stats.value = res))
