@@ -57,7 +57,6 @@ export default {
     watch(
       () => props.value,
       (newValue) => {
-        console.log(newValue)
         startCounter(newValue)
       },
     )

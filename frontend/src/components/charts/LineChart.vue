@@ -1,9 +1,10 @@
 <template>
-  <apexchart height="350" :options="chartOptions" :series="series"></apexchart>
+  <apexchart height="350" ref="chart" :options="chartOptions" :series="series"></apexchart>
+  {{ xaxis }}
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, watch } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 
 export default defineComponent({
@@ -44,5 +45,12 @@ export default defineComponent({
     }
   },
   setup() {},
+  watch: {
+    xaxis: function (newVal) {
+      this.$refs.chart.updateOptions({
+        xaxis: newVal,
+      })
+    },
+  },
 })
 </script>
