@@ -17,6 +17,17 @@ export function useApi<T>() {
       loading.value = false
     }
   }
+  const getTrackerMap = async () => {
+    try {
+      const response = await fetchData(`/prowlarrConfig`)
+      data.value = response as T
+      return response
+    } catch (err) {
+      error.value = err
+    } finally {
+      loading.value = false
+    }
+  }
 
-  return { data, loading, error, getUserStats }
+  return { data, loading, error, getUserStats, getTrackerMap }
 }

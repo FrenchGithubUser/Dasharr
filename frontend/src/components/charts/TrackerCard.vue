@@ -2,7 +2,7 @@
   <Card class="tracker-card">
     <template #content>
       <div class="logo-wrapper">
-        <img :src="'/images/' + statsSummary.tracker_id + '.png'" width="250px" class="logo" />
+        <img :src="'/images/' + trackerName + '.png'" width="250px" class="logo" :alt="trackerName" />
       </div>
       <Card>
         <template #content>
@@ -34,6 +34,9 @@ export default {
     LineChart,
   },
   props: {
+    trackerName: {
+      type: String,
+    },
     statsSummary: {
       type: Object,
       required: true,

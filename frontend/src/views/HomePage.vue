@@ -13,7 +13,7 @@
       <ValueCounter :value="stats ? stats.total_summary.seeding : 0" :duration="1000" unit="torrents" meaning="seeding" />
     </div>
     <div class="section tracker-details">
-      <TrackerCard v-for="tracker in stats?.per_tracker_summary" :key="tracker.tracker_id" :statsSummary="tracker" :statsDetailed="detailedStats(tracker.tracker_id)" />
+      <TrackerCard v-for="tracker in stats?.per_tracker_summary" :key="tracker.tracker_id" :trackerName="trackerMap[tracker.tracker_id]" :statsSummary="tracker" :statsDetailed="detailedStats(tracker.tracker_id)" />
     </div>
   </div>
 </template>
@@ -46,11 +46,18 @@ export default {
     },
   },
   setup() {
-    const { getUserStats } = useApi()
+    const { getUserStats, getTrackerMap } = useApi()
     const stats = ref(null)
     const loading = ref(true)
     const selectedPeriod = ref([new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), new Date()])
-    const selectedTrackers = ref([{ id: 0 }, { id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }])
+    const selectedTrackers = ref([{ id: 30 }, { id: 32 }, { id: 19 }, { id: 2 }, { id: 5 }, { id: 62 }])
+    const trackerMap = ref({})
+
+    const fetchTrackerMap = () => {
+      getTrackerMap().then((res) => {
+        trackerMap.value = res
+      })
+    }
 
     const fetchStats = () => {
       const date_from = selectedPeriod.value[0].toISOString().split('T')[0] + ' 00:00:00'
@@ -62,10 +69,11 @@ export default {
     }
 
     onMounted(() => {
+      fetchTrackerMap()
       fetchStats()
     })
 
-    return { stats, selectedPeriod, selectedTrackers, fetchStats }
+    return { stats, selectedPeriod, selectedTrackers, trackerMap, fetchStats }
   },
 }
 </script>

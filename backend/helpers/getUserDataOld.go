@@ -14,7 +14,7 @@ import (
 	"github.com/tidwall/sjson"
 )
 
-func GetUserData(trackerConfig gjson.Result) map[string]interface{} {
+func GetUserDataOld(trackerConfig gjson.Result) map[string]interface{} {
 
 	trackerInfo, _ := os.ReadFile(fmt.Sprintf("config/trackers/%s.json", trackerConfig.Get("tracker_id")))
 	trackerInfoJson := gjson.Parse(string(trackerInfo))

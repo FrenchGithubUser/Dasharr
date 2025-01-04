@@ -1,4 +1,4 @@
-package helpers
+package trackers
 
 import (
 	"errors"
@@ -9,7 +9,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func GetUserDataProwlarr(trackerConfig gjson.Result, trackerName string) (map[string]interface{}, error) {
+func GetUserData(trackerConfig gjson.Result, trackerName string) (map[string]interface{}, error) {
 
 	var results map[string]interface{}
 

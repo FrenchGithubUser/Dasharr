@@ -1,6 +1,5 @@
 {
-    "base_url": "https://blutopia.cc/api/user",
-    "tracker_type": "unit3d",
+    "base_url": "https://aither.cc/api/",
     "stats_keys": {
         "uploaded": "uploaded_amount",
         "downloaded": "downloaded_amount",

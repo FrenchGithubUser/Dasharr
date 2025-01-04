@@ -1,0 +1,13 @@
+{
+    "base_url": "https://itatorrents.xyz/api/",
+    "stats_keys": {
+        "uploaded": "uploaded_amount",
+        "downloaded": "downloaded_amount",
+        "ratio": "ratio",
+        "seeding": "seeding",
+        "leeching": "leeching",
+        "buffer": "buffer",
+        "group": "class",
+        "seedbonus": "bonus_points"
+    }
+}

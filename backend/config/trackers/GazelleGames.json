@@ -1,6 +1,4 @@
 {
-    "base_url": "https://gazellegames.net/api.php?request=user&id=",
-    "tracker_type": "gazelle",
     "stats_keys": {
         "stats.uploaded": "uploaded_amount",
         "stats.downloaded": "downloaded_amount",
@@ -25,6 +23,5 @@
         "ranks.posts": "posts_rank",
         "ranks.artists": "artists_rank",
         "ranks.overall": "overall_rank"
-    },
-    "auth_header": "X-API-Key"
+    }
 }
