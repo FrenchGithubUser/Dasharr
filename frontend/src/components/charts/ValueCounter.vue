@@ -29,7 +29,6 @@ export default {
       required: false,
     },
     meaning: {
-      type: String,
       required: true,
     },
   },
@@ -40,10 +39,10 @@ export default {
       // currentValue.value = 0
       const step = targetValue / (props.duration / 10)
 
-      let currentStep = 0
+      // let currentStep = 0
       const interval = setInterval(() => {
         currentValue.value += step
-        currentStep += 10
+        // currentStep += 10
 
         if (currentValue.value >= targetValue) {
           currentValue.value = targetValue

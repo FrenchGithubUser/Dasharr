@@ -1,0 +1,13 @@
+services:
+  dasharr:
+    container_name: dasharr
+    image: dasharr
+    ports:
+      - "1323:1323" 
+      - "3000:80"   
+    environment:
+      - API_KEY=your-secure-api-key
+    volumes:
+      # dasharr needs to read your prowlarr database to use your indexers' credentials
+      - ./docker-test/path/to/prowlarr/prowlarr.db:/backend/prowlarr/prowlarr.db:ro
+      - ./docker-test/config/:/backend/config/

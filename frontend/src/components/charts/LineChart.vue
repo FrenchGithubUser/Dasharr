@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch } from 'vue'
+import { defineComponent } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 
 export default defineComponent({
@@ -46,7 +46,7 @@ export default defineComponent({
   setup() {},
   watch: {
     xaxis: function (newVal) {
-      this.$refs.chart.updateOptions({
+      ;(this.$refs.chart as typeof VueApexCharts).updateOptions({
         xaxis: newVal,
       })
     },

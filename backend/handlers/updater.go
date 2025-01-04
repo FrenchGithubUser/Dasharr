@@ -12,7 +12,7 @@ import (
 )
 
 func Update(c echo.Context) error {
-	db, _ := sql.Open("sqlite3", "database.db")
+	db, _ := sql.Open("sqlite3", "config/database.db")
 
 	prowlarrDb, _ := sql.Open("sqlite3", "prowlarr/prowlarr.db")
 	prowlarrReq := `SELECT Id, Name, Settings FROM Indexers`

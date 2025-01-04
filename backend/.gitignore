@@ -1,5 +1,6 @@
 go.sum
+
 config/config.json
-database.db
+config/database.db
 
 prowlarr/*

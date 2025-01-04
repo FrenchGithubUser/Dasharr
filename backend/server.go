@@ -3,6 +3,7 @@ package main
 import (
 	"backend/handlers"
 	"net/http"
+	"os"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -11,7 +12,7 @@ import (
 func main() {
 	e := echo.New()
 
-	const apiKey = "your-secure-api-key"
+	apiKey := os.Getenv("API_KEY")
 
 	apiKeyMiddleware := func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {

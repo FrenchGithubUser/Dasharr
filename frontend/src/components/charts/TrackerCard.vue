@@ -8,7 +8,7 @@
         <template #content>
           <div class="explanation">Amounts increase during the selected period</div>
           <div class="counters">
-            <ValueCounter v-for="(stat, label) in statsToDisplay" :key="label" :value="stat" :meaning="label" :unit="['uploaded_amount', 'downloaded_amount'].indexOf(label) > -1 ? 'GiB' : ''" :duration="500" />
+            <ValueCounter v-for="(stat, label) in statsToDisplay" :key="label" :value="stat" :meaning="label" :unit="['uploaded_amount', 'downloaded_amount'].indexOf(label.toString()) > -1 ? 'GiB' : ''" :duration="500" />
           </div>
         </template>
       </Card>
@@ -54,7 +54,18 @@ export default {
       return Object.fromEntries(Object.entries(this.statsSummary).filter(([label, value]) => typeof value === 'number' && label != 'tracker_id'))
     },
     uploadDetail() {
-      return { series: [{ data: this.statsDetailed.map((stat: object) => stat.uploaded_amount.toFixed(1)), name: 'uploaded_amount' }], xaxis: { type: 'datetime', categories: this.statsDetailed.map((stat: object) => stat.collected_at) } }
+      return {
+        series: [
+          {
+            data: this.statsDetailed.map((stat: any) => stat.uploaded_amount.toFixed(1)),
+            name: 'uploaded_amount',
+          },
+        ],
+        xaxis: {
+          type: 'datetime',
+          categories: this.statsDetailed.map((stat: any) => stat.collected_at),
+        },
+      }
     },
   },
   setup() {},

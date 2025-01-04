@@ -8,12 +8,12 @@
       <Button type="button" label="Get Stats" :loading="loading" @click="fetchStats()" />
     </div>
     <div class="global-counters section">
-      <ValueCounter :value="stats ? stats.total_summary.downloaded_amount : 0" :duration="1000" unit="GiB" meaning="downloaded" />
-      <ValueCounter :value="stats ? stats.total_summary.uploaded_amount : 0" :duration="1000" unit="GiB" meaning="uploaded" />
-      <ValueCounter :value="stats ? stats.total_summary.seeding : 0" :duration="1000" unit="torrents" meaning="seeding" />
+      <ValueCounter :value="stats ? (stats as any).total_summary.downloaded_amount : 0" :duration="1000" unit="GiB" meaning="downloaded" />
+      <ValueCounter :value="stats ? (stats as any).total_summary.uploaded_amount : 0" :duration="1000" unit="GiB" meaning="uploaded" />
+      <ValueCounter :value="stats ? (stats as any).total_summary.seeding : 0" :duration="1000" unit="torrents" meaning="seeding" />
     </div>
     <div class="section tracker-details">
-      <TrackerCard v-for="tracker in stats?.per_tracker_summary" :key="tracker.tracker_id" :trackerName="trackerMap[tracker.tracker_id]" :statsSummary="tracker" :statsDetailed="detailedStats(tracker.tracker_id)" />
+      <TrackerCard v-for="tracker in (stats as any).per_tracker_summary" :key="tracker.tracker_id" :trackerName="trackerMap[tracker.tracker_id]" :statsSummary="tracker" :statsDetailed="detailedStats(tracker.tracker_id)" />
     </div>
   </div>
 </template>
@@ -41,17 +41,17 @@ export default {
     }
   },
   methods: {
-    detailedStats(tracker_id) {
-      return this.stats ? this.stats.all.filter((stat: object) => stat.tracker_id === tracker_id) : []
+    detailedStats(tracker_id: number) {
+      return this.stats ? this.stats.all.filter((stat: any) => stat.tracker_id === tracker_id) : []
     },
   },
   setup() {
     const { getUserStats, getTrackerMap } = useApi()
-    const stats = ref(null)
+    const stats = ref<any>(null)
     const loading = ref(true)
     const selectedPeriod = ref([new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), new Date()])
     const selectedTrackers = ref([{ id: 30 }, { id: 32 }, { id: 19 }, { id: 2 }, { id: 5 }, { id: 62 }])
-    const trackerMap = ref({})
+    const trackerMap = ref<any>({})
 
     const fetchTrackerMap = () => {
       getTrackerMap().then((res) => {

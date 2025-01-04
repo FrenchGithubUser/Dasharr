@@ -13,7 +13,7 @@ import (
 )
 
 func UpdateOld(c echo.Context) error {
-	db, _ := sql.Open("sqlite3", "database.db")
+	db, _ := sql.Open("sqlite3", "config/database.db")
 
 	configFile, _ := os.ReadFile("config/config.json")
 	trackerConfigs := gjson.Parse(string(configFile))
