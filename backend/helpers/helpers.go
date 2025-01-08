@@ -1,7 +1,12 @@
 package helpers
 
 import (
+	"fmt"
 	"math"
+	"os"
+	"strings"
+
+	"github.com/tidwall/gjson"
 )
 
 func BytesToGiB(bits int64) float64 {
@@ -31,6 +36,23 @@ func RemoveNilEntries(data []map[string]interface{}) []map[string]interface{} {
 			result = append(result, filtered)
 		}
 	}
+	return result
+}
+
+func GetIndexerInfo(indexerName string) gjson.Result {
+
+	indexersInfo, _ := os.ReadFile("config/config.json")
+	result := gjson.Get(string(indexersInfo), "#")
+
+	result.ForEach(func(key, value gjson.Result) bool {
+		siteName := value.Get("site_name").String()
+		if strings.Contains(siteName, indexerName) {
+			fmt.Println("Match found:", value)
+			return false
+		}
+		return true
+	})
+
 	return result
 }
 

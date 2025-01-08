@@ -9,11 +9,11 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func GetUserData(trackerConfig gjson.Result, trackerName string) (map[string]interface{}, error) {
+func GetUserData(trackerConfig gjson.Result, trackerName string, indexerId int) (map[string]interface{}, error) {
 
 	var results map[string]interface{}
 
-	req := ConstructTrackerRequest(trackerConfig, trackerName)
+	req := ConstructTrackerRequest(trackerConfig, trackerName, indexerId)
 	if req.URL == nil {
 		// fmt.Printf("Tracker %s unsupported\n", trackerName)
 		return map[string]interface{}{}, errors.New("Tracker not supported")

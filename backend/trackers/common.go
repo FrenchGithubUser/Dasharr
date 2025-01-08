@@ -9,13 +9,13 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func ConstructTrackerRequest(trackerConfig gjson.Result, trackerName string) *http.Request {
+func ConstructTrackerRequest(trackerConfig gjson.Result, trackerName string, indexerId int) *http.Request {
 	req := &http.Request{}
 	trackerType := determineTrackerType(trackerName)
 	if trackerType == "gazelle" {
 		req = ConstructRequestGazelle(trackerConfig, trackerName)
 	} else if trackerType == "unit3d" {
-		req = ConstructRequestUnit3d(trackerConfig, trackerName)
+		req = ConstructRequestUnit3d(trackerConfig, trackerName, indexerId)
 	}
 
 	return req

@@ -1,6 +1,7 @@
 package trackers
 
 import (
+	"backend/database"
 	"backend/helpers"
 	"fmt"
 	"net/http"
@@ -12,14 +13,23 @@ import (
 	"github.com/tidwall/sjson"
 )
 
-func ConstructRequestUnit3d(trackerConfig gjson.Result, trackerName string) *http.Request {
+func ConstructRequestUnit3d(trackerConfig gjson.Result, trackerName string, indexerId int) *http.Request {
 	configFile, _ := os.ReadFile(fmt.Sprintf("config/trackers/%s.json", trackerName))
 	configFileJson := gjson.Parse(string(configFile))
 	baseUrl := configFileJson.Get("base_url").Str + "user"
-	apiKey := trackerConfig.Get("extraFieldData.apikey").Str
+
+	indexerInfo := helpers.GetIndexerInfo(trackerName)
+
 	req, _ := http.NewRequest("GET", baseUrl, nil)
-	req.Header.Add("Authorization", "Bearer "+apiKey)
-	// fmt.Println(req)
+
+	cookie := &http.Cookie{
+		Name:  indexerInfo.Get("login.cookie_name").Str,
+		Value: database.GetIndexerCookie(indexerId),
+		Path:  "/",
+		// Expires: time.Now().Add(24 * time.Hour), // Optional: Set expiry time
+	}
+
+	req.AddCookie(cookie)
 	return req
 }
 

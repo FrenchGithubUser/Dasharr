@@ -58,7 +58,7 @@ func processTrackerProwlarr(trackerConfig []interface{}, db *sql.DB) bool {
 	// if enabled {
 	fmt.Printf("Updating %s's stats\n", trackerName)
 
-	trackerStats, error := trackers.GetUserData(gjson.Parse(trackerConfig[2].(string)), trackerName.(string))
+	trackerStats, error := trackers.GetUserData(gjson.Parse(trackerConfig[2].(string)), trackerName.(string), trackerConfig[0].(int))
 	if error != nil {
 		return false
 	}

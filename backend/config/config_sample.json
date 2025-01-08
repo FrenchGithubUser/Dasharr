@@ -2,8 +2,20 @@
     {
         "site_name": "Anthelion",
         "abbreviation": "ATH",
-        "statsCollection": {
-            "method": "builtIn"
+        "login": {
+            "url": "https://anthelion.me/login.php",
+            "body": "form_data",
+            "fields": {
+                "username": "username",
+                "password": "password",
+                "extra": {
+                    "twofa": "",
+                    "login": "log+in"
+                }
+            }
+        },
+        "stats_collection": {
+            "method": "built_in"
         }
     },
     {

@@ -9,7 +9,7 @@ import (
 )
 
 func InitDB() error {
-	createTableSQL := `
+	createStatsTableSQL := `
 	CREATE TABLE IF NOT EXISTS user_stats (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     tracker_id INTEGER,
@@ -39,7 +39,17 @@ func InitDB() error {
     collected_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	);`
 
-	ExecuteQuery(createTableSQL, []interface{}{})
+	createCrendentialsTableSQL := `
+	CREATE TABLE IF NOT EXISTS credentials (
+    tracker_id INTEGER PRIMARY KEY,
+    username VARCHAR,
+    password VARCHAR,
+    cookie VARCHAR,
+    api_key VARCHAR
+	);`
+
+	ExecuteQuery(createStatsTableSQL, []interface{}{})
+	ExecuteQuery(createCrendentialsTableSQL, []interface{}{})
 
 	log.Println("Database initialized successfully")
 	return nil
@@ -88,4 +98,12 @@ func ExecuteQuery(query string, args []interface{}) []map[string]interface{} {
 	}
 
 	return results
+}
+
+func GetIndexerCookie(indexerId int) string {
+
+	query := `SELECT cookie from credentials where tracker_id = ? `
+	result := ExecuteQuery(query, []interface{}{indexerId})
+
+	return result[0]["cookie"].(string)
 }

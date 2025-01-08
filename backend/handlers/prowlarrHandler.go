@@ -8,6 +8,12 @@ import (
 )
 
 func GetProwlarrTrackerIds(c echo.Context) error {
+	result := getProwlarrTrackerIdsFromDB()
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func getProwlarrTrackerIdsFromDB() map[string]string {
 	prowlarrDb, _ := sql.Open("sqlite3", "prowlarr/prowlarr.db")
 	prowlarrReq := `SELECT Id, Name FROM Indexers`
 	trackers, _ := prowlarrDb.Query(prowlarrReq)
@@ -21,6 +27,6 @@ func GetProwlarrTrackerIds(c echo.Context) error {
 		trackers.Scan(&id, &name) // Scan the values into variables
 		result[id] = name         // Populate the map
 	}
+	return result
 
-	return c.JSON(http.StatusOK, result)
 }
