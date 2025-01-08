@@ -1,5 +1,5 @@
 <template>
-  <apexchart height="350" ref="chart" :options="chartOptions" :series="series"></apexchart>
+  <apexchart height="350" ref="chart" :options="chartOptions" :series="series" class="line-chart"></apexchart>
 </template>
 
 <script lang="ts">
@@ -20,13 +20,20 @@ export default defineComponent({
       type: Object,
       required: true,
     },
+    label: {
+      type: String,
+      required: true,
+    },
   },
-  data() {
+  data(props) {
     return {
       chartOptions: {
         chart: {
           height: 350,
           type: 'area',
+          toolbar: {
+            show: false,
+          },
         },
         dataLabels: {
           enabled: false,
@@ -34,6 +41,11 @@ export default defineComponent({
         stroke: {
           curve: 'smooth',
         },
+        title: {
+          text: props.label,
+          align: 'center',
+        },
+
         xaxis: this.xaxis,
         // tooltip: {
         //   x: {

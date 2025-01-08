@@ -9,5 +9,5 @@ services:
       - API_KEY=your-secure-api-key
     volumes:
       # dasharr needs to read your prowlarr database to use your indexers' credentials
-      - ./docker-test/path/to/prowlarr/prowlarr.db:/backend/prowlarr/prowlarr.db:ro
-      - ./docker-test/config/:/backend/config/
+      - ./docker-test/prowlarr.db:/backend/prowlarr/prowlarr.db:ro
+      - ./docker-test/database.db:/backend/config/database.db

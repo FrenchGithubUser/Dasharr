@@ -12,10 +12,13 @@
           </div>
         </template>
       </Card>
-      <Card class="graphs">
+      <Card class="graphs-card">
         <template #content>
           <div class="explanation">Amounts evolution during the selected period</div>
-          <LineChart :series="uploadDetail.series" :xaxis="uploadDetail.xaxis" />
+          <div class="graphs">
+            <LineChart :series="uploadDetail.series" :xaxis="uploadDetail.xaxis" label="uploaded_amount" />
+            <LineChart :series="downloadDetail.series" :xaxis="downloadDetail.xaxis" label="downloaded_amount" />
+          </div>
         </template>
       </Card>
     </template>
@@ -67,12 +70,26 @@ export default {
         },
       }
     },
+    downloadDetail() {
+      return {
+        series: [
+          {
+            data: this.statsDetailed.map((stat: any) => stat.downloaded_amount.toFixed(1)),
+            name: 'downloaded_amount',
+          },
+        ],
+        xaxis: {
+          type: 'datetime',
+          categories: this.statsDetailed.map((stat: any) => stat.collected_at),
+        },
+      }
+    },
   },
   setup() {},
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .logo-wrapper {
   text-align: center;
 }
@@ -87,7 +104,13 @@ export default {
   margin-bottom: 10px;
   font-weight: bold;
 }
-.graphs {
+.graphs-card {
   margin-top: 20px;
+  .graphs {
+    display: flex;
+  }
+  .line-chart {
+    width: 50%;
+  }
 }
 </style>

@@ -1,11 +1,16 @@
 [
     {
-        "tracker_id": 0,
+        "site_name": "Anthelion",
+        "abbreviation": "ATH",
+        "statsCollection": {
+            "method": "builtIn"
+        }
+    },
+    {
         "site_name": "Redacted",
         "abbreviation": "RED",
-        "auth": {
-            "type": "api_key",
-            "api_key": "******"
+        "statsCollection": {
+            "method": "prowlarr"
         }
     }
 ]

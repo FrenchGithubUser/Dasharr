@@ -5,13 +5,11 @@
 </template>
 
 <script lang="ts">
+import 'primeicons/primeicons.css'
 
 export default {
-  components: {
-  },
-};
+  components: {},
+}
 </script>
 
-<style>
-
-</style>
+<style></style>
