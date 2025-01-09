@@ -31,3 +31,12 @@ export const fetchData = async (endpoint: string) => {
     throw error
   }
 }
+
+export const sendData = async (endpoint: string, jsonBody: object) => {
+  try {
+    const response = await apiClient.post(endpoint, jsonBody)
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}

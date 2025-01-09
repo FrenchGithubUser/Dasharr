@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { fetchData } from '../api/api.ts'
+import { fetchData, sendData } from '../api/api.ts'
 
 export function useApi<T>() {
   const data = ref<T | null>(null)
@@ -28,6 +28,28 @@ export function useApi<T>() {
       loading.value = false
     }
   }
+  const getConfig = async () => {
+    try {
+      const response = await fetchData(`/config`)
+      data.value = response as T
+      return response
+    } catch (err) {
+      error.value = err
+    } finally {
+      loading.value = false
+    }
+  }
+  const saveCredentials = async (jsonBody: object) => {
+    try {
+      const response = await sendData(`/saveCredentials`, jsonBody)
+      data.value = response as T
+      return response
+    } catch (err) {
+      error.value = err
+    } finally {
+      loading.value = false
+    }
+  }
 
-  return { data, loading, error, getUserStats, getTrackerMap }
+  return { data, loading, error, getUserStats, getTrackerMap, getConfig, saveCredentials }
 }

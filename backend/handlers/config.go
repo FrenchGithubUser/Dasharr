@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func GetUserConfig(c echo.Context) error {
+func GetConfig(c echo.Context) error {
 	data, err := os.ReadFile("config/config.json")
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Unable to read config file"})
@@ -19,13 +19,14 @@ func GetUserConfig(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Unable to parse JSON data"})
 	}
 
-	for _, item := range items {
-		if fillable, exists := item["fillable"].(map[string]interface{}); exists {
-			for k := range fillable {
-				fillable[k] = "*****"
-			}
-		}
-	}
+	// not needed anymore, credentials are stored in the database now
+	// for _, item := range items {
+	// 	if fillable, exists := item["fillable"].(map[string]interface{}); exists {
+	// 		for k := range fillable {
+	// 			fillable[k] = "*****"
+	// 		}
+	// 	}
+	// }
 
 	return c.JSON(http.StatusOK, items)
 }

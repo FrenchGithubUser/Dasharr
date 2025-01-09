@@ -34,7 +34,7 @@ func main() {
 	// e.GET("/updateOld", handlers.UpdateOld)
 	e.GET("/update", handlers.Update, apiKeyMiddleware)
 	e.GET("/stats", handlers.GetStats, apiKeyMiddleware)
-	e.GET("/userConfig", handlers.GetUserConfig, apiKeyMiddleware)
+	e.GET("/config", handlers.GetConfig, apiKeyMiddleware)
 	e.POST("/saveCredentials", handlers.SaveCredentials, apiKeyMiddleware)
 	e.GET("/prowlarrConfig", handlers.GetProwlarrTrackerIds, apiKeyMiddleware)
 	e.Logger.Fatal(e.Start(":1323"))

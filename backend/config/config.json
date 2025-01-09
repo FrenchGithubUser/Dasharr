@@ -1,5 +1,26 @@
 [
     {
+        "site_name": "Redacted",
+        "abbreviation": "RED",
+        "credentials": {
+            "method": "prowlarr"
+        }
+    },
+    {
+        "site_name": "GazelleGames",
+        "abbreviation": "GGn",
+        "credentials": {
+            "method": "prowlarr"
+        }
+    },
+    {
+        "site_name": "Orpheus",
+        "abbreviation": "OPS",
+        "credentials": {
+            "method": "prowlarr"
+        }
+    },
+    {
         "site_name": "Anthelion",
         "abbreviation": "ATH",
         "login": {
@@ -15,7 +36,7 @@
             },
             "cookie_name": "session"
         },
-        "stats_collection": {
+        "credentials": {
             "method": "built_in"
         }
     },
@@ -34,7 +55,7 @@
                 }
             }
         },
-        "statsCollection": {
+        "credentials": {
             "method": "built_in"
         }
     },
@@ -53,7 +74,7 @@
                 }
             }
         },
-        "statsCollection": {
+        "credentials": {
             "method": "built_in"
         }
     },
@@ -72,7 +93,7 @@
                 }
             }
         },
-        "statsCollection": {
+        "credentials": {
             "method": "built_in"
         }
     }
