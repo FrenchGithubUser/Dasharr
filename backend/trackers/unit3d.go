@@ -18,13 +18,13 @@ import (
 	"github.com/tidwall/sjson"
 )
 
-func LoginAndGetCookiesUnit3d(username string, password string, loginURL string) string {
+func LoginAndGetCookiesUnit3d(username string, password string, loginURL string, domain string) string {
 	formData := url.Values{}
 	formData.Add("username", username)
 	formData.Add("password", password)
 	formData.Add("_username", "")
 
-	tokens := getHiddenTokensUnit3d(loginURL)
+	tokens := getHiddenTokensUnit3d(loginURL, domain)
 
 	for key, value := range tokens["inputs"] {
 		formData.Add(key, value)
@@ -38,36 +38,29 @@ func LoginAndGetCookiesUnit3d(username string, password string, loginURL string)
 	jar, _ := cookiejar.New(nil)
 	client.Jar = jar
 	u, _ := url.Parse(loginURL)
-	cookieHeader := ""
 	var cookieSlice []*http.Cookie
 	for name, value := range tokens["cookies"] {
-		cookieHeader += fmt.Sprintf("%s=%s;", name, value)
 		cookieSlice = append(cookieSlice, &http.Cookie{
 			Name:  name,
 			Value: value,
 		})
 	}
-	cookieHeader = cookieHeader[:len(cookieHeader)-1] // Removes the last character
 	jar.SetCookies(u, cookieSlice)
 
 	req, err := http.NewRequest("POST", loginURL, strings.NewReader(formData.Encode()))
 	if err != nil {
 		log.Fatal(err)
 	}
-	req.Header.Add("Host", "blutopia.cc")
+	req.Header.Add("Host", domain)
 	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0")
-	// req.Header.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-	// req.Header.Add("Accept-Encoding", "gzip, deflate, br, zstd")
+	req.Header.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
 	req.Header.Add("Accept-Language", "en-US,en;q=0.5")
-	req.Header.Add("Referer", "https://blutopia.cc/login")
+	req.Header.Add("Referer", loginURL)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Add("Content-Length", "949")
-	req.Header.Add("Origin", "https://blutopia.cc")
+	req.Header.Add("Origin", fmt.Sprintf("https://%s", domain))
 	req.Header.Add("DNT", "1")
 	req.Header.Add("Sec-GPC", "1")
 	req.Header.Add("Connection", "keep-alive")
-	req.Header.Add("Cookie", cookieHeader)
-	fmt.Println(cookieHeader)
 	req.Header.Add("Upgrade-Insecure-Requests", "1")
 	req.Header.Add("Sec-Fetch-Dest", "document")
 	req.Header.Add("Sec-Fetch-Mode", "navigate")
@@ -77,7 +70,7 @@ func LoginAndGetCookiesUnit3d(username string, password string, loginURL string)
 	req.Header.Add("TE", "trailers")
 
 	// fmt.Println("Cookies in jar:", jar.Cookies(u))
-	fmt.Println(formData)
+	// fmt.Println(formData)
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -86,26 +79,23 @@ func LoginAndGetCookiesUnit3d(username string, password string, loginURL string)
 	defer resp.Body.Close()
 
 	cookies := resp.Cookies()
-	fmt.Println(resp.StatusCode)
+	// fmt.Println(resp.StatusCode)
+	cookiesStr := ""
 	for _, cookie := range cookies {
 		fmt.Println(cookie)
-		// if cookie.Name == cookieName {
-		// 	// todo: return an array of cookies instead
-		// 	return fmt.Sprintf("%s=%s", cookie.Name, cookie.Value)
-		// }
+		cookiesStr += cookie.String()
 	}
-	return ""
+	return cookiesStr
 }
 
-func getHiddenTokensUnit3d(url string) map[string]map[string]string {
+func getHiddenTokensUnit3d(url string, domain string) map[string]map[string]string {
 
 	req, _ := http.NewRequest("GET", url, nil)
 
-	req.Header.Add("Host", "blutopia.cc")
+	req.Header.Add("Host", domain)
 	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0")
-	// req.Header.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+	req.Header.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
 	req.Header.Add("Accept-Language", "en-US,en;q=0.5")
-	// req.Header.Add("Accept-Encoding", "gzip, deflate, br, zstd")
 	req.Header.Add("DNT", "1")
 	req.Header.Add("Sec-GPC", "1")
 	req.Header.Add("Connection", "keep-alive")
@@ -133,6 +123,16 @@ func getHiddenTokensUnit3d(url string) map[string]map[string]string {
 	tokenName, _ := token.Attr("name")
 	tokenValue, _ := token.Attr("value")
 	tokens["inputs"][tokenName] = tokenValue
+
+	doc.Find("html > body > main > section > form > input:nth-of-type(1)").Each(func(i int, s *goquery.Selection) {
+		tokenName, nameExists := s.Attr("name")
+		tokenValue, valueExists := s.Attr("value")
+		if nameExists && valueExists {
+			tokens["inputs"][tokenName] = tokenValue
+		} else {
+			fmt.Println("Token 2 attributes missing")
+		}
+	})
 
 	doc.Find("html > body > main > section > form > input:nth-of-type(3)").Each(func(i int, s *goquery.Selection) {
 		tokenName, nameExists := s.Attr("name")

@@ -61,7 +61,7 @@ func loginAndGetCookies(indexer string, username string, password string) string
 	fields := siteInfo.Get("login.fields").Map()
 
 	if trackerType == "unit3d" {
-		return trackers.LoginAndGetCookiesUnit3d(username, password, loginURL)
+		return trackers.LoginAndGetCookiesUnit3d(username, password, loginURL, siteInfo.Get("domain").Str)
 	} else {
 		if body == "form_data" {
 			formData := url.Values{}
