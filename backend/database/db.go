@@ -34,6 +34,8 @@ func InitDB() error {
     requests_rank INTEGER DEFAULT 0,
     bounty_rank INTEGER DEFAULT 0,
     posts_rank INTEGER DEFAULT 0,
+    seeding_size INTEGER DEFAULT 0,
+    freeleech_tokens INTEGER DEFAULT 0,
     artists_rank INTEGER DEFAULT 0,
     overall_rank INTEGER DEFAULT 0,
     collected_at DATETIME DEFAULT CURRENT_TIMESTAMP

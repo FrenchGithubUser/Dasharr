@@ -12,6 +12,7 @@
         "community.torrentComments": "torrent_comments",
         "community.invited": "invited",
         "community.posts": "forum_posts",
+        "community.seedSize": "seeding_size",
         "personal.warned": "warned",
         "personal.class": "class",
         "personal.donor": "donor",

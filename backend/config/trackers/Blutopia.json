@@ -11,7 +11,11 @@
             "seeding": "main article aside section:nth-of-type(4) dl div:nth-of-type(4) dd",
             "leeching": "main article aside section:nth-of-type(4) dl div:nth-of-type(5) dd",
             "ratio": "main article aside section:nth-of-type(5) dl div:nth-of-type(1) dd",
-            "torrent_comments": "main article aside section:nth-of-type(9) dl div:nth-of-type(2) dd"
+            "torrent_comments": "main article aside section:nth-of-type(9) dl div:nth-of-type(2) dd",
+            "forum_posts": "main article aside section:nth-of-type(10) dl div:nth-of-type(2) dd",
+            "warned": "main article aside section:nth-of-type(2) dl div:nth-of-type(1) dd",
+            "seeding_size": "main article aside section:nth-of-type(3) dl div:nth-of-type(3) dd",
+            "freeleech_tokens": "main article aside section:nth-of-type(8) dl div:nth-of-type(1) dd"
         }
     }
 }

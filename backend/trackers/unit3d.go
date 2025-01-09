@@ -182,7 +182,7 @@ func ConstructRequestUnit3d(trackerConfig gjson.Result, trackerName string, inde
 
 func ProcessTrackerResponseUnit3d(bodyString string, trackerConfig gjson.Result) map[string]interface{} {
 	results := map[string]interface{}{}
-	re := regexp.MustCompile(`([\d\.]+)[ \x{00a0}]?\s?(GiB|MiB|TiB)`)
+	re := regexp.MustCompile(`([\d\.]+)[ \x{00a0}]?\s?(GiB|MiB|TiB|KiB|B)`)
 
 	doc, _ := goquery.NewDocumentFromReader(strings.NewReader(bodyString))
 
@@ -199,6 +199,10 @@ func ProcessTrackerResponseUnit3d(bodyString string, trackerConfig gjson.Result)
 	bufferRegexResult := re.FindStringSubmatch(doc.Find(trackerConfig.Get("scraping.xpaths.buffer").Str).Text())
 	cleanBuffer, _ := strconv.ParseFloat(bufferRegexResult[1], 64)
 	results["buffer"] = helpers.AnyUnitToBytes(cleanBuffer, downloadRegexResult[2])
+
+	seedingSizeRegexResult := re.FindStringSubmatch(doc.Find(trackerConfig.Get("scraping.xpaths.seeding_size").Str).Text())
+	cleanSeedingSize, _ := strconv.ParseFloat(seedingSizeRegexResult[1], 64)
+	results["seeding_size"] = helpers.AnyUnitToBytes(cleanSeedingSize, seedingSizeRegexResult[2])
 
 	bonusPoints := doc.Find(trackerConfig.Get("scraping.xpaths.bonus_points").Str).Text()
 	results["bonus_points"] = strings.ReplaceAll(bonusPoints, " ", "")
@@ -220,6 +224,15 @@ func ProcessTrackerResponseUnit3d(bodyString string, trackerConfig gjson.Result)
 
 	torrent_comments := doc.Find(trackerConfig.Get("scraping.xpaths.torrent_comments").Str).Text()
 	results["torrent_comments"] = torrent_comments
+
+	forum_posts := doc.Find(trackerConfig.Get("scraping.xpaths.forum_posts").Str).Text()
+	results["forum_posts"] = forum_posts
+
+	freeleech_tokens := doc.Find(trackerConfig.Get("scraping.xpaths.freeleech_tokens").Str).Text()
+	results["freeleech_tokens"] = freeleech_tokens
+
+	warned, _ := strconv.Atoi(doc.Find(trackerConfig.Get("scraping.xpaths.warned").Str).Text())
+	results["warned"] = warned > 0
 
 	// fmt.Println(results)
 

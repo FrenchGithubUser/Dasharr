@@ -72,8 +72,8 @@ func processTrackerProwlarr(trackerConfig []interface{}, db *sql.DB) bool {
 			tracker_id, uploaded_torrents, uploaded_amount, downloaded_amount, snatched, seeding, leeching,
 			ratio, required_ratio, last_access, torrent_comments, invited, forum_posts, warned, class,
 			donor, uploaded_rank, downloaded_rank, uploads_rank, requests_rank, bounty_rank, posts_rank,
-			artists_rank, overall_rank, buffer, bonus_points
-			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`
+			artists_rank, overall_rank, buffer, bonus_points, seeding_size, freeleech_tokens
+			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`
 
 	_, err := db.Exec(insertSQL,
 		trackerConfig[0],
@@ -102,6 +102,8 @@ func processTrackerProwlarr(trackerConfig []interface{}, db *sql.DB) bool {
 		trackerStats["overall_rank"],
 		trackerStats["buffer"],
 		trackerStats["bonus_points"],
+		trackerStats["seeding_size"],
+		trackerStats["freeleech_tokens"],
 	)
 
 	if err != nil {

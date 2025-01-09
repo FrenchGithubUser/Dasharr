@@ -17,6 +17,8 @@ func AnyUnitToBytes(value float64, unit string) int64 {
 		return int64(value * math.Pow(2, 30))
 	} else if unit == "TiB" {
 		return int64(value * math.Pow(2, 40))
+	} else if unit == "B" {
+		return int64(value)
 	} else {
 		return 0
 	}
