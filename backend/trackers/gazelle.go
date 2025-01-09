@@ -27,8 +27,17 @@ func ConstructRequestGazelle(trackerConfig gjson.Result, trackerName string) *ht
 	return req
 }
 
-func ProcessTrackerResponseGazelle(results gjson.Result) gjson.Result {
-	return results.Get("response")
+func ProcessTrackerResponseGazelle(results gjson.Result, trackerInfoJson gjson.Result) map[string]interface{} {
+
+	results = results.Get("response")
+	mappedResults := make(map[string]interface{})
+	trackerInfoJson.Get("stats_keys").ForEach(func(key, value gjson.Result) bool {
+		mappedResults[value.String()] = results.Get(key.String()).Value()
+		return true
+	})
+	// fmt.Println(mappedResults)
+
+	return mappedResults
 }
 
 func getUserId(baseUrl string, apiKey string, trackerName string) int64 {

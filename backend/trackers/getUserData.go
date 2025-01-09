@@ -30,6 +30,7 @@ func GetUserData(trackerConfig gjson.Result, trackerName string, indexerId int64
 		results = ProcessTrackerResponse(resp, trackerConfig, trackerName)
 		return results, nil
 	} else {
+		fmt.Println(resp.Status)
 		fmt.Printf("Tracker %s did not reply with status 200 OK, skipping.", trackerName)
 		// fmt.Println(resp)
 		return map[string]interface{}{}, errors.New("An error occured when getting tracker's data")

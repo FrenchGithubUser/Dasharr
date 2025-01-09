@@ -1,5 +1,5 @@
 {
-    "base_url": "https://itatorrents.xyz/",
+    "base_url": "https://blutopia.cc/",
     "scraping": {
         "xpaths": {
             "uploaded_amount": "main article aside section:nth-of-type(5) dl div:nth-of-type(4) dd",

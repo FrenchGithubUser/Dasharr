@@ -1,0 +1,79 @@
+[
+    {
+        "site_name": "Anthelion",
+        "abbreviation": "ATH",
+        "login": {
+            "url": "https://anthelion.me/login.php",
+            "body": "form_data",
+            "fields": {
+                "username": "username",
+                "password": "password",
+                "extra": {
+                    "twofa": "",
+                    "login": "Log+in"
+                }
+            },
+            "cookie_name": "session"
+        },
+        "stats_collection": {
+            "method": "built_in"
+        }
+    },
+    {
+        "site_name": "Blutopia",
+        "abbreviation": "BLU",
+        "domain": "blutopia.cc",
+        "login": {
+            "url": "https://blutopia.cc/login",
+            "body": "form_data",
+            "fields": {
+                "username": "username",
+                "password": "password",
+                "extra": {
+                    "_username": ""
+                }
+            }
+        },
+        "statsCollection": {
+            "method": "built_in"
+        }
+    },
+    {
+        "site_name": "Aither",
+        "abbreviation": "Aither",
+        "domain": "aither.cc",
+        "login": {
+            "url": "https://aither.cc/login",
+            "body": "form_data",
+            "fields": {
+                "username": "username",
+                "password": "password",
+                "extra": {
+                    "_username": ""
+                }
+            }
+        },
+        "statsCollection": {
+            "method": "built_in"
+        }
+    },
+    {
+        "site_name": "ItaTorrents",
+        "abbreviation": "ItaTorrents",
+        "domain": "itatorrents.xyz",
+        "login": {
+            "url": "https://itatorrents.xyz/login",
+            "body": "form_data",
+            "fields": {
+                "username": "username",
+                "password": "password",
+                "extra": {
+                    "_username": ""
+                }
+            }
+        },
+        "statsCollection": {
+            "method": "built_in"
+        }
+    }
+]

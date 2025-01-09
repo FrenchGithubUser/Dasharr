@@ -25,21 +25,16 @@ func ProcessTrackerResponse(response *http.Response, trackerConfig gjson.Result,
 	trackerInfo, _ := os.ReadFile(fmt.Sprintf("config/trackers/%s.json", trackerName))
 	trackerInfoJson := gjson.Parse(string(trackerInfo))
 	body, _ := io.ReadAll(response.Body)
-	results := gjson.Parse(string(body))
+	results := map[string]interface{}{}
 	trackerType := DetermineTrackerType(trackerName)
 
 	if trackerType == "gazelle" {
-		results = ProcessTrackerResponseGazelle(results)
+		results = ProcessTrackerResponseGazelle(gjson.Parse(string(body)), trackerInfoJson)
 	} else if trackerType == "unit3d" {
-		results = ProcessTrackerResponseUnit3d(results, string(body))
+		results = ProcessTrackerResponseUnit3d(string(body), trackerInfoJson)
 	}
 
-	mappedResults := make(map[string]interface{})
-	trackerInfoJson.Get("stats_keys").ForEach(func(key, value gjson.Result) bool {
-		mappedResults[value.String()] = results.Get(key.String()).Value()
-		return true
-	})
-	return mappedResults
+	return results
 }
 
 func DetermineTrackerType(trackerName string) string {

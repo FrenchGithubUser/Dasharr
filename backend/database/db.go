@@ -100,10 +100,18 @@ func ExecuteQuery(query string, args []interface{}) []map[string]interface{} {
 	return results
 }
 
-func GetIndexerCookie(indexerId int64) string {
+func GetIndexerCookies(indexerId int64) string {
 
 	query := `SELECT cookies from credentials where tracker_id = ? `
 	result := ExecuteQuery(query, []interface{}{indexerId})
 
 	return result[0]["cookies"].(string)
+}
+
+func GetIndexerUsername(indexerId int64) string {
+
+	query := `SELECT username from credentials where tracker_id = ? `
+	result := ExecuteQuery(query, []interface{}{indexerId})
+
+	return result[0]["username"].(string)
 }

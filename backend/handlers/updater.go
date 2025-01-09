@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"strings"
 	"sync"
 
 	"github.com/labstack/echo/v4"
@@ -43,9 +44,9 @@ func Update(c echo.Context) error {
 			defer func() { <-semaphore }()
 
 			//temp only do blu
-			if configCopy[1] == "Blutopia (API)" {
-				processTrackerProwlarr(configCopy, db)
-			}
+			// if configCopy[1] == "Blutopia (API)" {
+			processTrackerProwlarr(configCopy, db)
+			// }
 		}(configCopy)
 	}
 
@@ -55,13 +56,14 @@ func Update(c echo.Context) error {
 }
 
 func processTrackerProwlarr(trackerConfig []interface{}, db *sql.DB) bool {
-	trackerName := trackerConfig[1]
+	trackerName := trackerConfig[1].(string)
+	trackerName = strings.TrimSuffix(trackerName, " (API)")
 	// enabled := trackerConfig.Get("fillable.enabled").Bool()
 
 	// if enabled {
 	fmt.Printf("Updating %s's stats\n", trackerName)
 
-	trackerStats, error := trackers.GetUserData(gjson.Parse(trackerConfig[2].(string)), trackerName.(string), trackerConfig[0].(int64))
+	trackerStats, error := trackers.GetUserData(gjson.Parse(trackerConfig[2].(string)), trackerName, trackerConfig[0].(int64))
 	if error != nil {
 		return false
 	}

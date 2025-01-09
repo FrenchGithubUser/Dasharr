@@ -15,7 +15,6 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/tidwall/gjson"
-	"github.com/tidwall/sjson"
 )
 
 func LoginAndGetCookiesUnit3d(username string, password string, loginURL string, domain string) string {
@@ -82,9 +81,10 @@ func LoginAndGetCookiesUnit3d(username string, password string, loginURL string,
 	// fmt.Println(resp.StatusCode)
 	cookiesStr := ""
 	for _, cookie := range cookies {
-		fmt.Println(cookie)
-		cookiesStr += cookie.String()
+		// fmt.Println(cookie)
+		cookiesStr += fmt.Sprintf("%s=%s;", cookie.Name, cookie.Value)
 	}
+	cookiesStr = cookiesStr[:len(cookiesStr)-1]
 	return cookiesStr
 }
 
@@ -155,35 +155,73 @@ func getHiddenTokensUnit3d(url string, domain string) map[string]map[string]stri
 func ConstructRequestUnit3d(trackerConfig gjson.Result, trackerName string, indexerId int64) *http.Request {
 	configFile, _ := os.ReadFile(fmt.Sprintf("config/trackers/%s.json", trackerName))
 	configFileJson := gjson.Parse(string(configFile))
-	baseUrl := configFileJson.Get("base_url").Str + "user"
+	username := database.GetIndexerUsername(indexerId)
+	baseUrl := configFileJson.Get("base_url").Str + "users/" + username
+	// fmt.Println(baseUrl)
 
-	indexerInfo := helpers.GetIndexerInfo(trackerName)
+	// indexerInfo := helpers.GetIndexerInfo(trackerName)
 
 	req, _ := http.NewRequest("GET", baseUrl, nil)
 
-	cookie := &http.Cookie{
-		Name:  indexerInfo.Get("login.cookie_name").Str,
-		Value: database.GetIndexerCookie(indexerId),
-		Path:  "/",
-		// Expires: time.Now().Add(24 * time.Hour), // Optional: Set expiry time
-	}
+	cookieStr := database.GetIndexerCookies(indexerId)
+	cookies := strings.Split(cookieStr, ";")
 
-	req.AddCookie(cookie)
+	for _, cookie := range cookies {
+		kv := strings.SplitN(cookie, "=", 2)
+		if len(kv) == 2 {
+			req.AddCookie(&http.Cookie{
+				Name:  kv[0],
+				Value: kv[1],
+			})
+		}
+	}
+	// fmt.Println(req)
+
 	return req
 }
 
-func ProcessTrackerResponseUnit3d(results gjson.Result, bodyString string) gjson.Result {
-	re := regexp.MustCompile(`^([\d\.]+)\s?(GiB|MiB|TiB)$`)
+func ProcessTrackerResponseUnit3d(bodyString string, trackerConfig gjson.Result) map[string]interface{} {
+	results := map[string]interface{}{}
+	re := regexp.MustCompile(`([\d\.]+)[ \x{00a0}]?\s?(GiB|MiB|TiB)`)
 
-	uploadRegexResult := re.FindStringSubmatch(results.Get("uploaded").Str)
+	doc, _ := goquery.NewDocumentFromReader(strings.NewReader(bodyString))
+
+	// todo: change the xpaths by entries in config file if some unit3d trackers have custom entries
+	uploadRegexResult := re.FindStringSubmatch(doc.Find(trackerConfig.Get("scraping.xpaths.uploaded_amount").Str).Text())
+	// fmt.Println(trackerConfig.Str)
 	cleanUpload, _ := strconv.ParseFloat(uploadRegexResult[1], 64)
-	edited_results, _ := sjson.Set(bodyString, "uploaded", helpers.AnyUnitToBytes(cleanUpload, uploadRegexResult[2]))
-	downloadRegexResult := re.FindStringSubmatch(results.Get("downloaded").Str)
-	cleanDownload, _ := strconv.ParseFloat(downloadRegexResult[1], 64)
-	edited_results, _ = sjson.Set(edited_results, "downloaded", helpers.AnyUnitToBytes(cleanDownload, downloadRegexResult[2]))
-	bufferRegexResult := re.FindStringSubmatch(results.Get("buffer").Str)
-	cleanBuffer, _ := strconv.ParseFloat(bufferRegexResult[1], 64)
-	edited_results, _ = sjson.Set(edited_results, "buffer", helpers.AnyUnitToBytes(cleanBuffer, downloadRegexResult[2]))
+	results["uploaded_amount"] = helpers.AnyUnitToBytes(cleanUpload, uploadRegexResult[2])
 
-	return gjson.Parse(edited_results)
+	downloadRegexResult := re.FindStringSubmatch(doc.Find(trackerConfig.Get("scraping.xpaths.downloaded_amount").Str).Text())
+	cleanDownload, _ := strconv.ParseFloat(downloadRegexResult[1], 64)
+	results["downloaded_amount"] = helpers.AnyUnitToBytes(cleanDownload, downloadRegexResult[2])
+
+	bufferRegexResult := re.FindStringSubmatch(doc.Find(trackerConfig.Get("scraping.xpaths.buffer").Str).Text())
+	cleanBuffer, _ := strconv.ParseFloat(bufferRegexResult[1], 64)
+	results["buffer"] = helpers.AnyUnitToBytes(cleanBuffer, downloadRegexResult[2])
+
+	bonusPoints := doc.Find(trackerConfig.Get("scraping.xpaths.bonus_points").Str).Text()
+	results["bonus_points"] = strings.ReplaceAll(bonusPoints, " ", "")
+
+	uploaded_torrents := doc.Find(trackerConfig.Get("scraping.xpaths.uploaded_torrents").Str).Text()
+	results["uploaded_torrents"] = uploaded_torrents
+
+	snatched := doc.Find(trackerConfig.Get("scraping.xpaths.snatched").Str).Text()
+	results["snatched"] = snatched
+
+	seeding := doc.Find(trackerConfig.Get("scraping.xpaths.seeding").Str).Text()
+	results["seeding"] = seeding
+
+	leeching := doc.Find(trackerConfig.Get("scraping.xpaths.leeching").Str).Text()
+	results["leeching"] = leeching
+
+	ratio := doc.Find(trackerConfig.Get("scraping.xpaths.ratio").Str).Text()
+	results["ratio"] = ratio
+
+	torrent_comments := doc.Find(trackerConfig.Get("scraping.xpaths.torrent_comments").Str).Text()
+	results["torrent_comments"] = torrent_comments
+
+	// fmt.Println(results)
+
+	return results
 }
