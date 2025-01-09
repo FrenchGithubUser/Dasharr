@@ -44,7 +44,7 @@ func InitDB() error {
     tracker_id INTEGER PRIMARY KEY,
     username VARCHAR,
     password VARCHAR,
-    cookie VARCHAR,
+    cookies TEXT,
     api_key VARCHAR
 	);`
 
@@ -100,10 +100,10 @@ func ExecuteQuery(query string, args []interface{}) []map[string]interface{} {
 	return results
 }
 
-func GetIndexerCookie(indexerId int) string {
+func GetIndexerCookie(indexerId int64) string {
 
-	query := `SELECT cookie from credentials where tracker_id = ? `
+	query := `SELECT cookies from credentials where tracker_id = ? `
 	result := ExecuteQuery(query, []interface{}{indexerId})
 
-	return result[0]["cookie"].(string)
+	return result[0]["cookies"].(string)
 }

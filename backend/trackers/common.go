@@ -9,9 +9,9 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func ConstructTrackerRequest(trackerConfig gjson.Result, trackerName string, indexerId int) *http.Request {
+func ConstructTrackerRequest(trackerConfig gjson.Result, trackerName string, indexerId int64) *http.Request {
 	req := &http.Request{}
-	trackerType := determineTrackerType(trackerName)
+	trackerType := DetermineTrackerType(trackerName)
 	if trackerType == "gazelle" {
 		req = ConstructRequestGazelle(trackerConfig, trackerName)
 	} else if trackerType == "unit3d" {
@@ -26,7 +26,7 @@ func ProcessTrackerResponse(response *http.Response, trackerConfig gjson.Result,
 	trackerInfoJson := gjson.Parse(string(trackerInfo))
 	body, _ := io.ReadAll(response.Body)
 	results := gjson.Parse(string(body))
-	trackerType := determineTrackerType(trackerName)
+	trackerType := DetermineTrackerType(trackerName)
 
 	if trackerType == "gazelle" {
 		results = ProcessTrackerResponseGazelle(results)
@@ -42,7 +42,7 @@ func ProcessTrackerResponse(response *http.Response, trackerConfig gjson.Result,
 	return mappedResults
 }
 
-func determineTrackerType(trackerName string) string {
+func DetermineTrackerType(trackerName string) string {
 	contains := func(s string, list []string) bool {
 		for _, v := range list {
 			if v == s {
@@ -54,7 +54,7 @@ func determineTrackerType(trackerName string) string {
 
 	if contains(trackerName, []string{"Orpheus", "Redacted", "GazelleGames"}) {
 		return "gazelle"
-	} else if contains(trackerName, []string{"Blutopia (API)", "Aither (API)", "ItaTorrents"}) {
+	} else if contains(trackerName, []string{"Blutopia", "Aither", "ItaTorrents"}) {
 		return "unit3d"
 	}
 	return "unknown"

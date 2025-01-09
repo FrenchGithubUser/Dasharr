@@ -1,7 +1,6 @@
 package helpers
 
 import (
-	"fmt"
 	"math"
 	"os"
 	"strings"
@@ -46,11 +45,7 @@ func GetIndexerInfo(indexerName string) gjson.Result {
 
 	result.ForEach(func(key, value gjson.Result) bool {
 		siteName := value.Get("site_name").String()
-		if strings.Contains(siteName, indexerName) {
-			fmt.Println("Match found:", value)
-			return false
-		}
-		return true
+		return !strings.Contains(siteName, indexerName)
 	})
 
 	return result

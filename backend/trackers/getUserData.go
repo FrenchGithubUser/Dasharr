@@ -9,7 +9,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func GetUserData(trackerConfig gjson.Result, trackerName string, indexerId int) (map[string]interface{}, error) {
+func GetUserData(trackerConfig gjson.Result, trackerName string, indexerId int64) (map[string]interface{}, error) {
 
 	var results map[string]interface{}
 

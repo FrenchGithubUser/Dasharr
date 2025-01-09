@@ -42,7 +42,10 @@ func Update(c echo.Context) error {
 			defer wg.Done()
 			defer func() { <-semaphore }()
 
-			processTrackerProwlarr(configCopy, db)
+			//temp only do blu
+			if configCopy[1] == "Blutopia (API)" {
+				processTrackerProwlarr(configCopy, db)
+			}
 		}(configCopy)
 	}
 
@@ -58,7 +61,7 @@ func processTrackerProwlarr(trackerConfig []interface{}, db *sql.DB) bool {
 	// if enabled {
 	fmt.Printf("Updating %s's stats\n", trackerName)
 
-	trackerStats, error := trackers.GetUserData(gjson.Parse(trackerConfig[2].(string)), trackerName.(string), trackerConfig[0].(int))
+	trackerStats, error := trackers.GetUserData(gjson.Parse(trackerConfig[2].(string)), trackerName.(string), trackerConfig[0].(int64))
 	if error != nil {
 		return false
 	}
