@@ -35,6 +35,9 @@ COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 COPY cron.sh /app/cron.sh
 RUN chmod +x /app/cron.sh
 
+COPY init.sh /app/init.sh
+RUN chmod +x /app/init.sh
+
 # Collect data every 6 hours
 RUN echo "0 */6 * * * /app/cron.sh" > /etc/cron.d/app-cron
 
@@ -49,5 +52,6 @@ ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["sh", "-c", "\
     service cron start && \
     ./backend/backend & \
-    nginx -g 'daemon off;'"]
+    nginx -g 'daemon off;' &
+    ./app/init.sh"]
 
