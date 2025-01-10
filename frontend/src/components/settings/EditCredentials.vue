@@ -37,6 +37,7 @@ export default {
       this.loading = true
       this.saveCredentials({ ...this.filledFields, indexer: this.indexerName }).then(() => {
         this.loading = false
+        //todo: check why this doesn't work
         this.$emit('credentialsSaved')
       })
     },

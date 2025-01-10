@@ -4,23 +4,31 @@
     <Card v-for="indexer in indexersConfig" :key="indexer['site_name']" class="indexer-card">
       <template #content>
         <div class="indexer">
-          <div class="indexer-name">{{ indexer['site_name'] }}</div>
-          <Button v-if="indexer['credentials']['method'] == 'built_in'" icon="pi pi-pencil" @click="selectIndexer(indexer)" />
-          <div v-if="indexer['credentials']['method'] == 'prowlarr'">Credentials managed in Prowlarr</div>
+          <div class="right">
+            <div class="indexer-name">{{ indexer['site_name'] }}</div>
+          </div>
+          <div class="left">
+            <Button v-if="indexer['credentials']['method'] == 'built_in'" icon="pi pi-pencil" @click="selectIndexer(indexer)" />
+            <div v-if="indexer['credentials']['method'] == 'prowlarr'">Credentials managed in Prowlarr</div>
+            <Chip label="Already setup" icon="pi pi-check" class="status" v-if="savedCredentialIndexers.some((object: any) => object.indexer_name === indexer['site_name'])" />
+            <Chip label="Not setup" icon="pi pi-times" class="status" v-if="indexer['credentials']['method'] != 'prowlarr' && !savedCredentialIndexers.some((object: any) => object.indexer_name === indexer['site_name'])" />
+          </div>
         </div>
       </template>
     </Card>
-    <Dialog v-model:visible="editCredentialsDialog" modal header="Edit credentials" @credentialsSaved="editCredentialsDialog = false"><EditCredentials :fields="selectedIndexer.fillableFields" :indexerName="selectedIndexer.name" /></Dialog>
+    <Dialog v-model:visible="editCredentialsDialog" modal header="Edit credentials" @credentialsSaved="credentialsSaved"><EditCredentials :fields="selectedIndexer.fillableFields" :indexerName="selectedIndexer.name" /></Dialog>
   </div>
 </template>
 
 <script lang="ts">
 import { useApi } from '@/composables/useApi'
-import Button from 'primevue/button'
-import Card from 'primevue/card'
 import { onMounted, ref } from 'vue'
 import EditCredentials from './EditCredentials.vue'
 import { Dialog } from 'primevue'
+import Button from 'primevue/button'
+import Card from 'primevue/card'
+import Chip from 'primevue/chip'
+
 export default {
   components: {
     // eslint-disable-next-line vue/no-reserved-component-names
@@ -29,6 +37,7 @@ export default {
     EditCredentials,
     // eslint-disable-next-line vue/no-reserved-component-names
     Dialog,
+    Chip,
   },
   data() {
     return {
@@ -45,19 +54,28 @@ export default {
       this.selectedIndexer.name = indexer['site_name']
       this.editCredentialsDialog = true
     },
+    credentialsSaved() {
+      this.savedCredentialIndexers.push({ indexer_name: this.selectIndexer.name })
+      this.editCredentialsDialog = false
+    },
   },
 
   setup() {
-    const { getConfig } = useApi()
+    const { getConfig, savedCredentials } = useApi()
     const indexersConfig = ref<object>({})
+    const savedCredentialIndexers = ref<object[]>([])
 
     onMounted(() => {
       getConfig().then((data) => {
         indexersConfig.value = data
       })
+      savedCredentials().then((data) => {
+        savedCredentialIndexers.value = data
+      })
     })
     return {
       indexersConfig,
+      savedCredentialIndexers,
     }
   },
 }
@@ -80,8 +98,16 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-.indexer-name {
-  font-weight: bold;
+
+  .indexer-name {
+    font-weight: bold;
+  }
+  .left {
+    display: flex;
+    align-items: center;
+    .status {
+      margin-left: 10px;
+    }
+  }
 }
 </style>

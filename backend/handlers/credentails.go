@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"os"
 	"strings"
 
@@ -57,45 +56,27 @@ func loginAndGetCookies(indexer string, username string, password string) string
 	trackerType := trackers.DetermineTrackerType(indexer)
 
 	loginURL := siteInfo.Get("login.url").String()
-	body := siteInfo.Get("login.body").String()
-	fields := siteInfo.Get("login.fields").Map()
 
 	if trackerType == "unit3d" {
 		return trackers.LoginAndGetCookiesUnit3d(username, password, loginURL, siteInfo.Get("domain").Str)
-	} else {
-		if body == "form_data" {
-			formData := url.Values{}
-			formData.Add(fields["username"].String(), username)
-			formData.Add(fields["password"].String(), password)
-
-			extraFields := fields["extra"].Map()
-			for key, val := range extraFields {
-				formData.Add(key, val.String())
-			}
-
-			client := &http.Client{
-				CheckRedirect: func(req *http.Request, via []*http.Request) error {
-					return http.ErrUseLastResponse // Prevents redirect
-				},
-			}
-			resp, err := client.PostForm(loginURL, formData)
-			if err != nil {
-				return ""
-			}
-			defer resp.Body.Close()
-
-			cookies := resp.Cookies()
-			cookieName := siteInfo.Get("login.cookie_name").Str
-			for _, cookie := range cookies {
-				if cookie.Name == cookieName {
-					// todo: return an array of cookies instead
-					return fmt.Sprintf("%s=%s", cookie.Name, cookie.Value)
-				}
-			}
-		}
-
+	} else if trackerType == "anthelion" {
+		return trackers.LoginAndGetCookiesAnthelion(username, password, loginURL, siteInfo)
 	}
 
 	return ""
 
+}
+
+// returns the indexers that have their credentials registered in Dasharr's db by the user
+func SavedCredentials(c echo.Context) error {
+	sql := `SELECT tracker_id from credentials`
+	results := database.ExecuteQuery(sql, []interface{}{})
+	indexerNames := getProwlarrTrackerIdsFromDB()
+
+	for _, obj := range results {
+		if id, ok := obj["tracker_id"].(int64); ok {
+			obj["indexer_name"] = strings.TrimSuffix(indexerNames[fmt.Sprint(id)], " (API)")
+		}
+	}
+	return c.JSON(http.StatusOK, results)
 }

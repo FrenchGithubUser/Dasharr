@@ -50,6 +50,17 @@ export function useApi<T>() {
       loading.value = false
     }
   }
+  const savedCredentials = async () => {
+    try {
+      const response = await fetchData(`/savedCredentials`)
+      data.value = response as T
+      return response
+    } catch (err) {
+      error.value = err
+    } finally {
+      loading.value = false
+    }
+  }
 
-  return { data, loading, error, getUserStats, getTrackerMap, getConfig, saveCredentials }
+  return { data, loading, error, getUserStats, getTrackerMap, getConfig, saveCredentials, savedCredentials }
 }

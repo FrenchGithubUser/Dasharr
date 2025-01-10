@@ -17,7 +17,7 @@ func ConstructRequestGazelle(trackerConfig gjson.Result, trackerName string) *ht
 		baseUrl += "ajax.php?action="
 	}
 	apiKey := trackerConfig.Get("apikey").Str
-	userId := getUserId(baseUrl, apiKey, trackerName)
+	userId := getUserIdGazelle(baseUrl, apiKey, trackerName)
 	req, _ := http.NewRequest("GET", baseUrl+"user&id="+strconv.Itoa(int(userId)), nil)
 	if trackerName == "GazelleGames" {
 		req.Header.Add("X-API-Key", apiKey)
@@ -40,7 +40,7 @@ func ProcessTrackerResponseGazelle(results gjson.Result, trackerInfoJson gjson.R
 	return mappedResults
 }
 
-func getUserId(baseUrl string, apiKey string, trackerName string) int64 {
+func getUserIdGazelle(baseUrl string, apiKey string, trackerName string) int64 {
 	req, _ := http.NewRequest("", "", nil)
 	if trackerName == "GazelleGames" {
 		req, _ = http.NewRequest("GET", baseUrl+"quick_user", nil)

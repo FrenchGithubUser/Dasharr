@@ -164,31 +164,20 @@ func ConstructRequestUnit3d(trackerConfig gjson.Result, trackerName string, inde
 	req, _ := http.NewRequest("GET", baseUrl, nil)
 
 	cookieStr := database.GetIndexerCookies(indexerId)
-	cookies := strings.Split(cookieStr, ";")
-
-	for _, cookie := range cookies {
-		kv := strings.SplitN(cookie, "=", 2)
-		if len(kv) == 2 {
-			req.AddCookie(&http.Cookie{
-				Name:  kv[0],
-				Value: kv[1],
-			})
-		}
-	}
+	req = addCookiesToRequest(req, cookieStr)
 	// fmt.Println(req)
 
 	return req
 }
 
 func ProcessTrackerResponseUnit3d(bodyString string, trackerConfig gjson.Result) map[string]interface{} {
+	//todo: handle cookie refresh
 	results := map[string]interface{}{}
 	re := regexp.MustCompile(`([\d\.]+)[ \x{00a0}]?\s?(GiB|MiB|TiB|KiB|B)`)
 
 	doc, _ := goquery.NewDocumentFromReader(strings.NewReader(bodyString))
 
-	// todo: change the xpaths by entries in config file if some unit3d trackers have custom entries
 	uploadRegexResult := re.FindStringSubmatch(doc.Find(trackerConfig.Get("scraping.xpaths.uploaded_amount").Str).Text())
-	// fmt.Println(trackerConfig.Str)
 	cleanUpload, _ := strconv.ParseFloat(uploadRegexResult[1], 64)
 	results["uploaded_amount"] = helpers.AnyUnitToBytes(cleanUpload, uploadRegexResult[2])
 

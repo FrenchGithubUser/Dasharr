@@ -60,7 +60,7 @@ export default {
     const stats = ref<any>(null)
     const loading = ref(true)
     const selectedPeriod = ref([new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), new Date()])
-    const selectedTrackers = ref([{ id: 30 }, { id: 32 }, { id: 19 }, { id: 2 }, { id: 5 }, { id: 62 }])
+    const selectedTrackers = ref([{ id: 1 }, { id: 30 }, { id: 32 }, { id: 19 }, { id: 2 }, { id: 5 }, { id: 62 }])
     const trackerMap = ref<any>({})
 
     const fetchTrackerMap = () => {
