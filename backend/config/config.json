@@ -247,5 +247,43 @@
                 "freeleech_tokens": "main article aside section:nth-of-type(8) dl div:nth-of-type(1) dd"
             }
         }
+    },
+    {
+        "site_name": "Oldtoons",
+        "abbreviation": "OTW",
+        "domain": "oldtoons.world",
+        "login": {
+            "url": "https://oldtoons.world/login",
+            "body": "form_data",
+            "fields": {
+                "username": "username",
+                "password": "password",
+                "extra": {
+                    "_username": ""
+                }
+            }
+        },
+        "credentials": {
+            "method": "built_in"
+        },
+        "base_url": "https://oldtoons.world/",
+        "scraping": {
+            "xpaths": {
+                "uploaded_amount": "main article aside section:nth-of-type(5) dl div:nth-of-type(4) dd",
+                "downloaded_amount": "main article aside section:nth-of-type(5) dl div:nth-of-type(5) dd",
+                "buffer": "main article aside section:nth-of-type(5) dl div:nth-of-type(3) dd",
+                "bonus_points": "main article aside section:nth-of-type(7) dl div:nth-of-type(1) dd",
+                "uploaded_torrents": "main article aside section:nth-of-type(4) dl div:nth-of-type(1) dd",
+                "snatched": "main article aside section:nth-of-type(4) dl div:nth-of-type(3) dd",
+                "seeding": "main article aside section:nth-of-type(4) dl div:nth-of-type(4) dd",
+                "leeching": "main article aside section:nth-of-type(4) dl div:nth-of-type(5) dd",
+                "ratio": "main article aside section:nth-of-type(5) dl div:nth-of-type(1) dd",
+                "torrent_comments": "main article aside section:nth-of-type(9) dl div:nth-of-type(2) dd",
+                "forum_posts": "main article aside section:nth-of-type(10) dl div:nth-of-type(2) dd",
+                "warned": "main article aside section:nth-of-type(2) dl div:nth-of-type(1) dd",
+                "seeding_size": "main article aside section:nth-of-type(3) dl div:nth-of-type(3) dd",
+                "freeleech_tokens": "main article aside section:nth-of-type(8) dl div:nth-of-type(1) dd"
+            }
+        }
     }
 ]

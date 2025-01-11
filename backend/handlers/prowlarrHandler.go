@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 )
@@ -20,12 +21,12 @@ func getProwlarrTrackerIdsFromDB() map[string]string {
 
 	defer trackers.Close()
 
-	result := make(map[string]string) // Initialize the map
+	result := make(map[string]string)
 
 	for trackers.Next() {
 		var id, name string
-		trackers.Scan(&id, &name) // Scan the values into variables
-		result[id] = name         // Populate the map
+		trackers.Scan(&id, &name)
+		result[id] = strings.TrimSuffix(name, " (API)")
 	}
 	return result
 

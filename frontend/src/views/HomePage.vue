@@ -60,7 +60,6 @@ export default {
     const stats = ref<any>(null)
     const loading = ref(true)
     const selectedPeriod = ref([new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), new Date()])
-    const selectedTrackers = ref([{ id: 1 }, { id: 30 }, { id: 32 }, { id: 19 }, { id: 2 }, { id: 5 }, { id: 62 }])
     const trackerMap = ref<any>({})
 
     const fetchTrackerMap = () => {
@@ -70,10 +69,11 @@ export default {
     }
 
     const fetchStats = () => {
+      const enabledIndexers = JSON.parse(localStorage.getItem('enabledIndexers') ?? '[]')
       loading.value = true
       const date_from = selectedPeriod.value[0].toISOString().split('T')[0] + ' 00:00:00'
       const date_to = selectedPeriod.value[1].toISOString().split('T')[0] + ' 23:59:59'
-      const tracker_ids = selectedTrackers.value.map((tracker) => tracker.id).join(',')
+      const tracker_ids = enabledIndexers.map((id: string) => id).join(',')
       getUserStats(date_from, date_to, tracker_ids)
         .then((res) => (stats.value = res))
         .finally(() => (loading.value = false))
@@ -84,7 +84,7 @@ export default {
       fetchStats()
     })
 
-    return { loading, stats, selectedPeriod, selectedTrackers, trackerMap, fetchStats }
+    return { loading, stats, selectedPeriod, trackerMap, fetchStats }
   },
 }
 </script>

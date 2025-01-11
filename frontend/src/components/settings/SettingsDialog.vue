@@ -1,26 +1,26 @@
 <template>
   <div id="settings-dialog">
     <div class="sidebar">
-      <Button class="credentials" label="Credentials" @click="currentSection = 'credentials'" />
+      <Button class="indexers" label="Indexers" @click="currentSection = 'indexers'" />
     </div>
     <div class="sections">
-      <CredentialsSettigns class="settings" v-if="currentSection == 'credentials'" />
+      <IndexerSettigns class="settings" v-if="currentSection == 'indexers'" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import Button from 'primevue/button'
-import CredentialsSettigns from './CredentialsSettigns.vue'
+import IndexerSettigns from './IndexerSettings.vue'
 export default {
   components: {
     // eslint-disable-next-line vue/no-reserved-component-names
     Button,
-    CredentialsSettigns,
+    IndexerSettigns,
   },
   data() {
     return {
-      currentSection: 'credentials',
+      currentSection: 'indexers',
     }
   },
 }

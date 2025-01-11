@@ -17,6 +17,7 @@ export function useApi<T>() {
       loading.value = false
     }
   }
+  //todo : call this on first page load and make the result accessible everywhere instead
   const getTrackerMap = async () => {
     try {
       const response = await fetchData(`/prowlarrConfig`)

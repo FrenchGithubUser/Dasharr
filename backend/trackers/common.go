@@ -56,7 +56,7 @@ func DetermineTrackerType(trackerName string) string {
 
 	if contains(trackerName, []string{"Orpheus", "Redacted", "GazelleGames"}) {
 		return "gazelle"
-	} else if contains(trackerName, []string{"Blutopia", "Aither", "ItaTorrents"}) {
+	} else if contains(trackerName, []string{"Blutopia", "Aither", "ItaTorrents", "Oldtoons"}) {
 		return "unit3d"
 	} else if contains(trackerName, []string{"Anthelion"}) {
 		return "anthelion"
