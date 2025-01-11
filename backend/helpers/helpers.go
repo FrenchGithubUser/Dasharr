@@ -1,9 +1,9 @@
 package helpers
 
 import (
+	"fmt"
 	"math"
 	"os"
-	"strings"
 
 	"github.com/tidwall/gjson"
 )
@@ -43,14 +43,16 @@ func RemoveNilEntries(data []map[string]interface{}) []map[string]interface{} {
 func GetIndexerInfo(indexerName string) gjson.Result {
 
 	indexersInfo, _ := os.ReadFile("config/config.json")
-	result := gjson.Get(string(indexersInfo), "#")
+	indexerInfo := gjson.Get(string(indexersInfo), fmt.Sprintf(`#[site_name=="%s"]`, indexerName))
+	return indexerInfo
+	// result := gjson.Get(string(indexersInfo), "#")
 
-	result.ForEach(func(key, value gjson.Result) bool {
-		siteName := value.Get("site_name").String()
-		return !strings.Contains(siteName, indexerName)
-	})
+	// result.ForEach(func(key, value gjson.Result) bool {
+	// 	siteName := value.Get("site_name").String()
+	// 	return !strings.Contains(siteName, indexerName)
+	// })
 
-	return result
+	// return result
 }
 
 // takes a whole database query result and converts the relevant items

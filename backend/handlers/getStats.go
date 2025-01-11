@@ -48,6 +48,9 @@ func GetStats(c echo.Context) error {
 	    (SELECT uploaded_amount FROM user_stats WHERE tracker_id = u.tracker_id AND collected_at BETWEEN ? AND ? ORDER BY collected_at DESC LIMIT 1) - 
 		(SELECT uploaded_amount FROM user_stats WHERE tracker_id = u.tracker_id AND collected_at BETWEEN ? AND ? ORDER BY collected_at ASC LIMIT 1) AS uploaded_amount, 
 
+	    (SELECT bonus_points FROM user_stats WHERE tracker_id = u.tracker_id AND collected_at BETWEEN ? AND ? ORDER BY collected_at DESC LIMIT 1) - 
+		(SELECT bonus_points FROM user_stats WHERE tracker_id = u.tracker_id AND collected_at BETWEEN ? AND ? ORDER BY collected_at ASC LIMIT 1) AS bonus_points, 
+
 		(SELECT snatched FROM user_stats WHERE tracker_id = u.tracker_id AND collected_at BETWEEN ? AND ? ORDER BY collected_at DESC LIMIT 1) - 
 		(SELECT snatched FROM user_stats WHERE tracker_id = u.tracker_id AND collected_at BETWEEN ? AND ? ORDER BY collected_at ASC LIMIT 1) AS snatched, 
 
@@ -68,7 +71,7 @@ func GetStats(c echo.Context) error {
 		AND tracker_id IN (?` + strings.Repeat(", ?", len(trackerIds)-1) + `)
 		GROUP BY tracker_id;
 	`
-	amount_dates_required := 15
+	amount_dates_required := 17
 	args = []interface{}{}
 	for i := 0; i < amount_dates_required; i++ {
 		args = append(args, date_from, date_to)

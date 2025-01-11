@@ -22,6 +22,7 @@ func LoginAndGetCookiesUnit3d(username string, password string, loginURL string,
 	formData.Add("username", username)
 	formData.Add("password", password)
 	formData.Add("_username", "")
+	formData.Add("remember", "on")
 
 	tokens := getHiddenTokensUnit3d(loginURL, domain)
 

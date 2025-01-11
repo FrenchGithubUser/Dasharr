@@ -13,17 +13,21 @@ import (
 func ConstructTrackerRequest(trackerConfig gjson.Result, trackerName string, indexerId int64) *http.Request {
 	req := &http.Request{}
 	trackerType := DetermineTrackerType(trackerName)
+
 	if trackerType == "gazelle" {
 		req = ConstructRequestGazelle(trackerConfig, trackerName)
 	} else if trackerType == "unit3d" {
+		// LoginAndGetCookiesUnit3d(username, password, loginURL, indexerInfo.Get("domain").Str)
 		req = ConstructRequestUnit3d(trackerConfig, trackerName, indexerId)
 	} else if trackerType == "anthelion" {
+		// LoginAndGetCookiesAnthelion(username, password, loginURL, indexerInfo)
 		req = ConstructRequestAnthelion(trackerConfig, trackerName, indexerId)
 	}
 
 	return req
 }
 
+// todo : cookie refresh
 func ProcessTrackerResponse(response *http.Response, trackerConfig gjson.Result, trackerName string) map[string]interface{} {
 	trackerInfo, _ := os.ReadFile(fmt.Sprintf("config/trackers/%s.json", trackerName))
 	trackerInfoJson := gjson.Parse(string(trackerInfo))

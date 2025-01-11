@@ -117,3 +117,11 @@ func GetIndexerUsername(indexerId int64) string {
 
 	return result[0]["username"].(string)
 }
+
+func GetIndexerPassword(indexerId int64) string {
+
+	query := `SELECT password from credentials where tracker_id = ? `
+	result := ExecuteQuery(query, []interface{}{indexerId})
+
+	return result[0]["password"].(string)
+}
