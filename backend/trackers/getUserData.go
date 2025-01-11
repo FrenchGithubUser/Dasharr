@@ -9,11 +9,11 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func GetUserData(trackerConfig gjson.Result, trackerName string, indexerId int64) (map[string]interface{}, error) {
+func GetUserData(prowlarrIndexerConfig gjson.Result, trackerName string, indexerId int64) (map[string]interface{}, error) {
 
 	var results map[string]interface{}
 
-	req := ConstructTrackerRequest(trackerConfig, trackerName, indexerId)
+	req := ConstructTrackerRequest(prowlarrIndexerConfig, trackerName, indexerId)
 	if req.URL == nil {
 		// fmt.Printf("Tracker %s unsupported\n", trackerName)
 		return map[string]interface{}{}, errors.New("Tracker not supported")
@@ -27,7 +27,7 @@ func GetUserData(trackerConfig gjson.Result, trackerName string, indexerId int64
 	defer resp.Body.Close()
 
 	if resp.Status == "200 OK" {
-		results = ProcessTrackerResponse(resp, trackerConfig, trackerName)
+		results = ProcessTrackerResponse(resp, trackerName)
 		return results, nil
 	} else {
 		fmt.Println(resp.Status)

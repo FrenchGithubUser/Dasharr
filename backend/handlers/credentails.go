@@ -48,8 +48,6 @@ func SaveCredentials(c echo.Context) error {
 }
 
 func loginAndGetCookies(indexer string, username string, password string) string {
-	// data, _ := os.ReadFile("config/config.json")
-	// siteInfo := gjson.Get(string(data), fmt.Sprintf(`#[site_name=="%s"]`, indexer))
 	siteInfo := helpers.GetIndexerInfo(indexer)
 	if !siteInfo.Exists() {
 		return ""

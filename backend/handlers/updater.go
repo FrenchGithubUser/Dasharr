@@ -21,10 +21,10 @@ func Update(c echo.Context) error {
 	defer trackers.Close()
 
 	cols, _ := trackers.Columns()
-	trackerConfig := make([]interface{}, len(cols))
+	prowlarrIndexerConfig := make([]interface{}, len(cols))
 	ptrs := make([]interface{}, len(cols))
 	for i := range ptrs {
-		ptrs[i] = &trackerConfig[i]
+		ptrs[i] = &prowlarrIndexerConfig[i]
 	}
 
 	const maxConcurrency = 10
@@ -34,20 +34,20 @@ func Update(c echo.Context) error {
 	for trackers.Next() {
 		trackers.Scan(ptrs...)
 		// Make a copy of trackerConfig to avoid race conditions
-		configCopy := make([]interface{}, len(trackerConfig))
-		copy(configCopy, trackerConfig)
+		prowlarrIndexerConfigCopy := make([]interface{}, len(prowlarrIndexerConfig))
+		copy(prowlarrIndexerConfigCopy, prowlarrIndexerConfig)
 
 		wg.Add(1)
 		semaphore <- struct{}{}
-		go func(configCopy []interface{}) {
+		go func(prowlarrIndexerConfigCopy []interface{}) {
 			defer wg.Done()
 			defer func() { <-semaphore }()
 
 			//temp only do blu
 			// if configCopy[1] == "Blutopia (API)" {
-			processTrackerProwlarr(configCopy, db)
+			processTrackerProwlarr(prowlarrIndexerConfigCopy, db)
 			// }
-		}(configCopy)
+		}(prowlarrIndexerConfigCopy)
 	}
 
 	wg.Wait()
@@ -55,15 +55,15 @@ func Update(c echo.Context) error {
 	return c.String(http.StatusOK, "Data inserted successfully!")
 }
 
-func processTrackerProwlarr(trackerConfig []interface{}, db *sql.DB) bool {
-	trackerName := trackerConfig[1].(string)
+func processTrackerProwlarr(prowlarrIndexerConfig []interface{}, db *sql.DB) bool {
+	trackerName := prowlarrIndexerConfig[1].(string)
 	trackerName = strings.TrimSuffix(trackerName, " (API)")
 	// enabled := trackerConfig.Get("fillable.enabled").Bool()
 
 	// if enabled {
 	fmt.Printf("Updating %s's stats\n", trackerName)
 
-	trackerStats, error := trackers.GetUserData(gjson.Parse(trackerConfig[2].(string)), trackerName, trackerConfig[0].(int64))
+	trackerStats, error := trackers.GetUserData(gjson.Parse(prowlarrIndexerConfig[2].(string)), trackerName, prowlarrIndexerConfig[0].(int64))
 	if error != nil {
 		return false
 	}
@@ -76,7 +76,7 @@ func processTrackerProwlarr(trackerConfig []interface{}, db *sql.DB) bool {
 			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`
 
 	_, err := db.Exec(insertSQL,
-		trackerConfig[0],
+		prowlarrIndexerConfig[0],
 		trackerStats["uploaded_torrents"],
 		trackerStats["uploaded_amount"],
 		trackerStats["downloaded_amount"],

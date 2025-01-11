@@ -9,14 +9,14 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func ConstructRequestGazelle(trackerConfig gjson.Result, trackerName string) *http.Request {
-	baseUrl := trackerConfig.Get("baseUrl").Str
+func ConstructRequestGazelle(prowlarrIndexerConfig gjson.Result, trackerName string) *http.Request {
+	baseUrl := prowlarrIndexerConfig.Get("baseUrl").Str
 	if trackerName == "GazelleGames" {
 		baseUrl += "api.php?request="
 	} else {
 		baseUrl += "ajax.php?action="
 	}
-	apiKey := trackerConfig.Get("apikey").Str
+	apiKey := prowlarrIndexerConfig.Get("apikey").Str
 	userId := getUserIdGazelle(baseUrl, apiKey, trackerName)
 	req, _ := http.NewRequest("GET", baseUrl+"user&id="+strconv.Itoa(int(userId)), nil)
 	if trackerName == "GazelleGames" {

@@ -1,46 +1,44 @@
 package trackers
 
 import (
-	"fmt"
+	"backend/helpers"
 	"io"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/tidwall/gjson"
 )
 
-func ConstructTrackerRequest(trackerConfig gjson.Result, trackerName string, indexerId int64) *http.Request {
+func ConstructTrackerRequest(prowlarrIndexerConfig gjson.Result, trackerName string, indexerId int64) *http.Request {
 	req := &http.Request{}
 	trackerType := DetermineTrackerType(trackerName)
 
 	if trackerType == "gazelle" {
-		req = ConstructRequestGazelle(trackerConfig, trackerName)
+		req = ConstructRequestGazelle(prowlarrIndexerConfig, trackerName)
 	} else if trackerType == "unit3d" {
 		// LoginAndGetCookiesUnit3d(username, password, loginURL, indexerInfo.Get("domain").Str)
-		req = ConstructRequestUnit3d(trackerConfig, trackerName, indexerId)
+		req = ConstructRequestUnit3d(trackerName, indexerId)
 	} else if trackerType == "anthelion" {
 		// LoginAndGetCookiesAnthelion(username, password, loginURL, indexerInfo)
-		req = ConstructRequestAnthelion(trackerConfig, trackerName, indexerId)
+		req = ConstructRequestAnthelion(prowlarrIndexerConfig, trackerName, indexerId)
 	}
 
 	return req
 }
 
 // todo : cookie refresh
-func ProcessTrackerResponse(response *http.Response, trackerConfig gjson.Result, trackerName string) map[string]interface{} {
-	trackerInfo, _ := os.ReadFile(fmt.Sprintf("config/trackers/%s.json", trackerName))
-	trackerInfoJson := gjson.Parse(string(trackerInfo))
+func ProcessTrackerResponse(response *http.Response, trackerName string) map[string]interface{} {
+	indexerInfo := helpers.GetIndexerInfo(trackerName)
 	body, _ := io.ReadAll(response.Body)
 	results := map[string]interface{}{}
 	trackerType := DetermineTrackerType(trackerName)
 
 	if trackerType == "gazelle" {
-		results = ProcessTrackerResponseGazelle(gjson.Parse(string(body)), trackerInfoJson)
+		results = ProcessTrackerResponseGazelle(gjson.Parse(string(body)), indexerInfo)
 	} else if trackerType == "unit3d" {
-		results = ProcessTrackerResponseUnit3d(string(body), trackerInfoJson)
+		results = ProcessTrackerResponseUnit3d(string(body), indexerInfo)
 	} else if trackerType == "anthelion" {
-		results = ProcessTrackerResponseAnthelion(string(body), trackerInfoJson)
+		results = ProcessTrackerResponseAnthelion(string(body), indexerInfo)
 	}
 
 	return results

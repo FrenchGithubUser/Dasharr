@@ -48,8 +48,8 @@ func LoginAndGetCookiesAnthelion(username string, password string, loginURL stri
 	return cookiesStr
 }
 
-func ConstructRequestAnthelion(trackerConfig gjson.Result, trackerName string, indexerId int64) *http.Request {
-	baseUrl := trackerConfig.Get("baseUrl").Str
+func ConstructRequestAnthelion(prowlarrIndexerConfig gjson.Result, trackerName string, indexerId int64) *http.Request {
+	baseUrl := prowlarrIndexerConfig.Get("baseUrl").Str
 
 	cookieStr := database.GetIndexerCookies(indexerId)
 	userPath := getUserPathAnthelion(baseUrl, cookieStr)

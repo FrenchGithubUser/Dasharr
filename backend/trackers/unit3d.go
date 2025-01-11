@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
-	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -153,11 +152,10 @@ func getHiddenTokensUnit3d(url string, domain string) map[string]map[string]stri
 	return tokens
 }
 
-func ConstructRequestUnit3d(trackerConfig gjson.Result, trackerName string, indexerId int64) *http.Request {
-	configFile, _ := os.ReadFile(fmt.Sprintf("config/trackers/%s.json", trackerName))
-	configFileJson := gjson.Parse(string(configFile))
+func ConstructRequestUnit3d(trackerName string, indexerId int64) *http.Request {
+	indexerInfo := helpers.GetIndexerInfo(trackerName)
 	username := database.GetIndexerUsername(indexerId)
-	baseUrl := configFileJson.Get("base_url").Str + "users/" + username
+	baseUrl := indexerInfo.Get("base_url").Str + "users/" + username
 	// fmt.Println(baseUrl)
 
 	// indexerInfo := helpers.GetIndexerInfo(trackerName)
