@@ -31,7 +31,6 @@ func main() {
 	}))
 
 	e.GET("/initdb", handlers.InitDB, apiKeyMiddleware)
-	// e.GET("/updateOld", handlers.UpdateOld)
 	e.GET("/update", handlers.Update, apiKeyMiddleware)
 	e.GET("/stats", handlers.GetStats, apiKeyMiddleware)
 	e.GET("/config", handlers.GetConfig, apiKeyMiddleware)
