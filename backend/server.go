@@ -36,6 +36,6 @@ func main() {
 	e.GET("/config", handlers.GetConfig, apiKeyMiddleware)
 	e.POST("/saveCredentials", handlers.SaveCredentials, apiKeyMiddleware)
 	e.GET("/savedCredentials", handlers.SavedCredentials, apiKeyMiddleware)
-	e.GET("/prowlarrConfig", handlers.GetProwlarrTrackerIds, apiKeyMiddleware)
+	e.GET("/prowlarrConfig", handlers.GetProwlarrIndexerIds, apiKeyMiddleware)
 	e.Logger.Fatal(e.Start(":1323"))
 }

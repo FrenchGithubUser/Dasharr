@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"backend/trackers"
+	"backend/indexers"
 	"database/sql"
 	"fmt"
 	"net/http"
@@ -17,10 +17,10 @@ func Update(c echo.Context) error {
 
 	prowlarrDb, _ := sql.Open("sqlite3", "prowlarr/prowlarr.db")
 	prowlarrReq := `SELECT Id, Name, Settings FROM Indexers`
-	trackers, _ := prowlarrDb.Query(prowlarrReq)
-	defer trackers.Close()
+	indexers, _ := prowlarrDb.Query(prowlarrReq)
+	defer indexers.Close()
 
-	cols, _ := trackers.Columns()
+	cols, _ := indexers.Columns()
 	prowlarrIndexerConfig := make([]interface{}, len(cols))
 	ptrs := make([]interface{}, len(cols))
 	for i := range ptrs {
@@ -31,9 +31,9 @@ func Update(c echo.Context) error {
 	semaphore := make(chan struct{}, maxConcurrency)
 	var wg sync.WaitGroup
 
-	for trackers.Next() {
-		trackers.Scan(ptrs...)
-		// Make a copy of trackerConfig to avoid race conditions
+	for indexers.Next() {
+		indexers.Scan(ptrs...)
+		// Make a copy of indexerConfig to avoid race conditions
 		prowlarrIndexerConfigCopy := make([]interface{}, len(prowlarrIndexerConfig))
 		copy(prowlarrIndexerConfigCopy, prowlarrIndexerConfig)
 
@@ -45,7 +45,7 @@ func Update(c echo.Context) error {
 
 			//temp only do blu
 			// if configCopy[1] == "Blutopia (API)" {
-			processTrackerProwlarr(prowlarrIndexerConfigCopy, db)
+			processIndexerProwlarr(prowlarrIndexerConfigCopy, db)
 			// }
 		}(prowlarrIndexerConfigCopy)
 	}
@@ -55,21 +55,21 @@ func Update(c echo.Context) error {
 	return c.String(http.StatusOK, "Data inserted successfully!")
 }
 
-func processTrackerProwlarr(prowlarrIndexerConfig []interface{}, db *sql.DB) bool {
-	trackerName := prowlarrIndexerConfig[1].(string)
-	trackerName = strings.TrimSuffix(trackerName, " (API)")
-	// enabled := trackerConfig.Get("fillable.enabled").Bool()
+func processIndexerProwlarr(prowlarrIndexerConfig []interface{}, db *sql.DB) bool {
+	indexerName := prowlarrIndexerConfig[1].(string)
+	indexerName = strings.TrimSuffix(indexerName, " (API)")
+	// enabled := indexerConfig.Get("fillable.enabled").Bool()
 
 	// if enabled {
-	fmt.Printf("Updating %s's stats\n", trackerName)
+	fmt.Printf("Updating %s's stats\n", indexerName)
 
-	trackerStats, error := trackers.GetUserData(gjson.Parse(prowlarrIndexerConfig[2].(string)), trackerName, prowlarrIndexerConfig[0].(int64))
+	indexerStats, error := indexers.GetUserData(gjson.Parse(prowlarrIndexerConfig[2].(string)), indexerName, prowlarrIndexerConfig[0].(int64))
 	if error != nil {
 		return false
 	}
 
 	insertSQL := `INSERT INTO user_stats (
-			tracker_id, uploaded_torrents, uploaded_amount, downloaded_amount, snatched, seeding, leeching,
+			indexer_id, uploaded_torrents, uploaded_amount, downloaded_amount, snatched, seeding, leeching,
 			ratio, required_ratio, last_access, torrent_comments, invited, forum_posts, warned, class,
 			donor, uploaded_rank, downloaded_rank, uploads_rank, requests_rank, bounty_rank, posts_rank,
 			artists_rank, overall_rank, buffer, bonus_points, seeding_size, freeleech_tokens
@@ -77,33 +77,33 @@ func processTrackerProwlarr(prowlarrIndexerConfig []interface{}, db *sql.DB) boo
 
 	_, err := db.Exec(insertSQL,
 		prowlarrIndexerConfig[0],
-		trackerStats["uploaded_torrents"],
-		trackerStats["uploaded_amount"],
-		trackerStats["downloaded_amount"],
-		trackerStats["snatched"],
-		trackerStats["seeding"],
-		trackerStats["leeching"],
-		trackerStats["ratio"],
-		trackerStats["required_ratio"],
-		trackerStats["last_access"],
-		trackerStats["torrent_comments"],
-		trackerStats["invited"],
-		trackerStats["forum_posts"],
-		trackerStats["warned"],
-		trackerStats["class"],
-		trackerStats["donor"],
-		trackerStats["uploaded_rank"],
-		trackerStats["downloaded_rank"],
-		trackerStats["uploads_rank"],
-		trackerStats["requests_rank"],
-		trackerStats["bounty_rank"],
-		trackerStats["posts_rank"],
-		trackerStats["artists_rank"],
-		trackerStats["overall_rank"],
-		trackerStats["buffer"],
-		trackerStats["bonus_points"],
-		trackerStats["seeding_size"],
-		trackerStats["freeleech_tokens"],
+		indexerStats["uploaded_torrents"],
+		indexerStats["uploaded_amount"],
+		indexerStats["downloaded_amount"],
+		indexerStats["snatched"],
+		indexerStats["seeding"],
+		indexerStats["leeching"],
+		indexerStats["ratio"],
+		indexerStats["required_ratio"],
+		indexerStats["last_access"],
+		indexerStats["torrent_comments"],
+		indexerStats["invited"],
+		indexerStats["forum_posts"],
+		indexerStats["warned"],
+		indexerStats["class"],
+		indexerStats["donor"],
+		indexerStats["uploaded_rank"],
+		indexerStats["downloaded_rank"],
+		indexerStats["uploads_rank"],
+		indexerStats["requests_rank"],
+		indexerStats["bounty_rank"],
+		indexerStats["posts_rank"],
+		indexerStats["artists_rank"],
+		indexerStats["overall_rank"],
+		indexerStats["buffer"],
+		indexerStats["bonus_points"],
+		indexerStats["seeding_size"],
+		indexerStats["freeleech_tokens"],
 	)
 
 	if err != nil {

@@ -16,8 +16,8 @@
       <ValueCounter :value="stats ? (stats as any).total_summary.uploaded_amount : 0" :duration="1000" unit="GiB" meaning="uploaded" />
       <ValueCounter :value="stats ? (stats as any).total_summary.seeding : 0" :duration="1000" unit="torrents" meaning="seeding" />
     </div>
-    <div class="section tracker-details" v-if="stats">
-      <TrackerCard v-for="tracker in (stats as any).per_tracker_summary" :key="tracker.tracker_id" :trackerName="trackerMap[tracker.tracker_id]" :statsSummary="tracker" :statsDetailed="detailedStats(tracker.tracker_id)" />
+    <div class="section indexer-details" v-if="stats">
+      <IndexerCard v-for="indexer in (stats as any).per_indexer_summary" :key="indexer.indexer_id" :indexerName="indexerMap[indexer.indexer_id]" :statsSummary="indexer" :statsDetailed="detailedStats(indexer.indexer_id)" />
     </div>
     <Dialog v-model:visible="settingsDialog" modal header="Settings"><SettingsDialog /></Dialog>
   </div>
@@ -29,7 +29,7 @@ import DatePicker from 'primevue/datepicker'
 import { Button, FloatLabel } from 'primevue'
 import { useApi } from '../composables/useApi'
 import { ref, onMounted } from 'vue'
-import TrackerCard from '@/components/charts/TrackerCard.vue'
+import IndexerCard from '@/components/charts/IndexerCard.vue'
 import Dialog from 'primevue/dialog'
 import SettingsDialog from '@/components/settings/SettingsDialog.vue'
 
@@ -42,7 +42,7 @@ export default {
     Button,
     // eslint-disable-next-line vue/no-reserved-component-names
     Dialog,
-    TrackerCard,
+    IndexerCard,
     SettingsDialog,
   },
   data() {
@@ -51,20 +51,20 @@ export default {
     }
   },
   methods: {
-    detailedStats(tracker_id: number) {
-      return this.stats ? this.stats.all.filter((stat: any) => stat.tracker_id === tracker_id) : []
+    detailedStats(indexer_id: number) {
+      return this.stats ? this.stats.all.filter((stat: any) => stat.indexer_id === indexer_id) : []
     },
   },
   setup() {
-    const { getUserStats, getTrackerMap } = useApi()
+    const { getUserStats, getIndexerMap } = useApi()
     const stats = ref<any>(null)
     const loading = ref(true)
     const selectedPeriod = ref([new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), new Date()])
-    const trackerMap = ref<any>({})
+    const indexerMap = ref<any>({})
 
-    const fetchTrackerMap = () => {
-      getTrackerMap().then((res) => {
-        trackerMap.value = res
+    const fetchIndexerMap = () => {
+      getIndexerMap().then((res) => {
+        indexerMap.value = res
       })
     }
 
@@ -73,18 +73,18 @@ export default {
       loading.value = true
       const date_from = selectedPeriod.value[0].toISOString().split('T')[0] + ' 00:00:00'
       const date_to = selectedPeriod.value[1].toISOString().split('T')[0] + ' 23:59:59'
-      const tracker_ids = enabledIndexers.map((id: string) => id).join(',')
-      getUserStats(date_from, date_to, tracker_ids)
+      const indexer_ids = enabledIndexers.map((id: string) => id).join(',')
+      getUserStats(date_from, date_to, indexer_ids)
         .then((res) => (stats.value = res))
         .finally(() => (loading.value = false))
     }
 
     onMounted(() => {
-      fetchTrackerMap()
+      fetchIndexerMap()
       fetchStats()
     })
 
-    return { loading, stats, selectedPeriod, trackerMap, fetchStats }
+    return { loading, stats, selectedPeriod, indexerMap, fetchStats }
   },
 }
 </script>
@@ -113,10 +113,10 @@ export default {
   justify-content: space-around;
   margin-bottom: 1.5em;
 }
-.tracker-details {
+.indexer-details {
   flex-direction: column;
 }
-.tracker-card {
+.indexer-card {
   margin: 1em 0;
 }
 </style>

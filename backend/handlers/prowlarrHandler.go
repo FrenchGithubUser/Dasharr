@@ -8,24 +8,24 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func GetProwlarrTrackerIds(c echo.Context) error {
-	result := getProwlarrTrackerIdsFromDB()
+func GetProwlarrIndexerIds(c echo.Context) error {
+	result := getProwlarrIndexerIdsFromDB()
 
 	return c.JSON(http.StatusOK, result)
 }
 
-func getProwlarrTrackerIdsFromDB() map[string]string {
+func getProwlarrIndexerIdsFromDB() map[string]string {
 	prowlarrDb, _ := sql.Open("sqlite3", "prowlarr/prowlarr.db")
 	prowlarrReq := `SELECT Id, Name FROM Indexers`
-	trackers, _ := prowlarrDb.Query(prowlarrReq)
+	indexers, _ := prowlarrDb.Query(prowlarrReq)
 
-	defer trackers.Close()
+	defer indexers.Close()
 
 	result := make(map[string]string)
 
-	for trackers.Next() {
+	for indexers.Next() {
 		var id, name string
-		trackers.Scan(&id, &name)
+		indexers.Scan(&id, &name)
 		result[id] = strings.TrimSuffix(name, " (API)")
 	}
 	return result

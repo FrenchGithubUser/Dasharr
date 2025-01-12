@@ -1,8 +1,8 @@
 <template>
-  <Card class="tracker-card">
+  <Card class="indexer-card">
     <template #content>
       <div class="logo-wrapper">
-        <img :src="'/images/' + trackerName + '.png'" width="250px" class="logo" :alt="trackerName" />
+        <img :src="'/images/' + indexerName + '.png'" width="250px" class="logo" :alt="indexerName" />
       </div>
       <Card>
         <template #content>
@@ -37,7 +37,7 @@ export default {
     LineChart,
   },
   props: {
-    trackerName: {
+    indexerName: {
       type: String,
     },
     statsSummary: {
@@ -54,7 +54,7 @@ export default {
   },
   computed: {
     statsToDisplay() {
-      return Object.fromEntries(Object.entries(this.statsSummary).filter(([label, value]) => typeof value === 'number' && label != 'tracker_id'))
+      return Object.fromEntries(Object.entries(this.statsSummary).filter(([label, value]) => typeof value === 'number' && label != 'indexer_id'))
     },
     uploadDetail() {
       return {

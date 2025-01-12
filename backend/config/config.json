@@ -1,6 +1,6 @@
 [
     {
-        "site_name": "Redacted",
+        "indexer_name": "Redacted",
         "abbreviation": "RED",
         "credentials": {
             "method": "prowlarr"
@@ -32,7 +32,7 @@
         }
     },
     {
-        "site_name": "GazelleGames",
+        "indexer_name": "GazelleGames",
         "abbreviation": "GGn",
         "credentials": {
             "method": "prowlarr"
@@ -65,7 +65,7 @@
         }
     },
     {
-        "site_name": "Orpheus",
+        "indexer_name": "Orpheus",
         "abbreviation": "OPS",
         "credentials": {
             "method": "prowlarr"
@@ -97,7 +97,7 @@
         }
     },
     {
-        "site_name": "Anthelion",
+        "indexer_name": "Anthelion",
         "abbreviation": "ATH",
         "login": {
             "url": "https://anthelion.me/login.php",
@@ -135,7 +135,7 @@
         }
     },
     {
-        "site_name": "Blutopia",
+        "indexer_name": "Blutopia",
         "abbreviation": "BLU",
         "domain": "blutopia.cc",
         "login": {
@@ -173,7 +173,7 @@
         }
     },
     {
-        "site_name": "Aither",
+        "indexer_name": "Aither",
         "abbreviation": "Aither",
         "domain": "aither.cc",
         "login": {
@@ -211,7 +211,7 @@
         }
     },
     {
-        "site_name": "ItaTorrents",
+        "indexer_name": "ItaTorrents",
         "abbreviation": "ItaTorrents",
         "domain": "itatorrents.xyz",
         "login": {
@@ -249,7 +249,7 @@
         }
     },
     {
-        "site_name": "Oldtoons",
+        "indexer_name": "Oldtoons",
         "abbreviation": "OTW",
         "domain": "oldtoons.world",
         "login": {

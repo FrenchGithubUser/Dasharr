@@ -1,4 +1,4 @@
-package trackers
+package indexers
 
 import (
 	"io"
@@ -9,17 +9,17 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func ConstructRequestGazelle(prowlarrIndexerConfig gjson.Result, trackerName string) *http.Request {
+func ConstructRequestGazelle(prowlarrIndexerConfig gjson.Result, indexerName string) *http.Request {
 	baseUrl := prowlarrIndexerConfig.Get("baseUrl").Str
-	if trackerName == "GazelleGames" {
+	if indexerName == "GazelleGames" {
 		baseUrl += "api.php?request="
 	} else {
 		baseUrl += "ajax.php?action="
 	}
 	apiKey := prowlarrIndexerConfig.Get("apikey").Str
-	userId := getUserIdGazelle(baseUrl, apiKey, trackerName)
+	userId := getUserIdGazelle(baseUrl, apiKey, indexerName)
 	req, _ := http.NewRequest("GET", baseUrl+"user&id="+strconv.Itoa(int(userId)), nil)
-	if trackerName == "GazelleGames" {
+	if indexerName == "GazelleGames" {
 		req.Header.Add("X-API-Key", apiKey)
 	} else {
 		req.Header.Add("Authorization", apiKey)
@@ -27,11 +27,11 @@ func ConstructRequestGazelle(prowlarrIndexerConfig gjson.Result, trackerName str
 	return req
 }
 
-func ProcessTrackerResponseGazelle(results gjson.Result, trackerInfoJson gjson.Result) map[string]interface{} {
+func ProcessIndexerResponseGazelle(results gjson.Result, indexerInfoJson gjson.Result) map[string]interface{} {
 
 	results = results.Get("response")
 	mappedResults := make(map[string]interface{})
-	trackerInfoJson.Get("stats_keys").ForEach(func(key, value gjson.Result) bool {
+	indexerInfoJson.Get("stats_keys").ForEach(func(key, value gjson.Result) bool {
 		mappedResults[value.String()] = results.Get(key.String()).Value()
 		return true
 	})
@@ -40,9 +40,9 @@ func ProcessTrackerResponseGazelle(results gjson.Result, trackerInfoJson gjson.R
 	return mappedResults
 }
 
-func getUserIdGazelle(baseUrl string, apiKey string, trackerName string) int64 {
+func getUserIdGazelle(baseUrl string, apiKey string, indexerName string) int64 {
 	req, _ := http.NewRequest("", "", nil)
-	if trackerName == "GazelleGames" {
+	if indexerName == "GazelleGames" {
 		req, _ = http.NewRequest("GET", baseUrl+"quick_user", nil)
 		req.Header.Add("X-API-Key", apiKey)
 	} else {

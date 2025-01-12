@@ -12,7 +12,7 @@ func InitDB() error {
 	createStatsTableSQL := `
 	CREATE TABLE IF NOT EXISTS user_stats (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    tracker_id INTEGER,
+    indexer_id INTEGER,
     uploaded_torrents INTEGER DEFAULT 0 NOT NULL,
     uploaded_amount INTEGER DEFAULT 0 NOT NULL,
     downloaded_amount INTEGER DEFAULT 0 NOT NULL,
@@ -38,12 +38,13 @@ func InitDB() error {
     freeleech_tokens INTEGER DEFAULT 0,
     artists_rank INTEGER DEFAULT 0,
     overall_rank INTEGER DEFAULT 0,
+    bonus_points INTEGER DEFAULT 0,
     collected_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	);`
 
 	createCrendentialsTableSQL := `
 	CREATE TABLE IF NOT EXISTS credentials (
-    tracker_id INTEGER PRIMARY KEY,
+    indexer_id INTEGER PRIMARY KEY,
     username VARCHAR,
     password VARCHAR,
     cookies TEXT,
@@ -104,7 +105,7 @@ func ExecuteQuery(query string, args []interface{}) []map[string]interface{} {
 
 func GetIndexerCookies(indexerId int64) string {
 
-	query := `SELECT cookies from credentials where tracker_id = ? `
+	query := `SELECT cookies from credentials where indexer_id = ? `
 	result := ExecuteQuery(query, []interface{}{indexerId})
 
 	return result[0]["cookies"].(string)
@@ -112,7 +113,7 @@ func GetIndexerCookies(indexerId int64) string {
 
 func GetIndexerUsername(indexerId int64) string {
 
-	query := `SELECT username from credentials where tracker_id = ? `
+	query := `SELECT username from credentials where indexer_id = ? `
 	result := ExecuteQuery(query, []interface{}{indexerId})
 
 	return result[0]["username"].(string)
@@ -120,7 +121,7 @@ func GetIndexerUsername(indexerId int64) string {
 
 func GetIndexerPassword(indexerId int64) string {
 
-	query := `SELECT password from credentials where tracker_id = ? `
+	query := `SELECT password from credentials where indexer_id = ? `
 	result := ExecuteQuery(query, []interface{}{indexerId})
 
 	return result[0]["password"].(string)

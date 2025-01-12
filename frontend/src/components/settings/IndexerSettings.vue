@@ -2,18 +2,18 @@
   <div id="indexer-settings">
     <div class="note">Indexers need to be setup in Prowlarr first in order to work with Dasharr, even if the credentials from Prowlarr are not used</div>
     <div class="note">Enabling/disabling an indexer will only affect its visibility on the dashboard, data will always be collected</div>
-    <Card v-for="indexer in indexersConfig" :key="indexer['site_name']" class="indexer-card">
+    <Card v-for="indexer in indexersConfig" :key="indexer['indexer_name']" class="indexer-card">
       <template #content>
         <div class="indexer">
           <div class="left">
-            <div class="indexer-name">{{ indexer['site_name'] }}</div>
+            <div class="indexer-name">{{ indexer['indexer_name'] }}</div>
           </div>
           <div class="right">
             <Button v-if="indexer['credentials']['method'] == 'built_in'" icon="pi pi-pencil" @click="selectIndexer(indexer)" />
             <div v-if="indexer['credentials']['method'] == 'prowlarr'">Credentials managed in Prowlarr</div>
-            <Chip label="Already setup" icon="pi pi-check" class="status" v-if="savedCredentialIndexers.some((object: any) => object.indexer_name === indexer['site_name'])" />
-            <Chip label="Not setup" icon="pi pi-times" class="status" v-if="indexer['credentials']['method'] != 'prowlarr' && !savedCredentialIndexers.some((object: any) => object.indexer_name === indexer['site_name'])" />
-            <ToggleSwitch class="toggle-switch" @change="updateEnbaledTrackers(indexer['site_name'])" :modelValue="enabledIndexers.includes(Object.keys(trackerMap).find((key) => trackerMap[key] === indexer['site_name'])!)" />
+            <Chip label="Already setup" icon="pi pi-check" class="status" v-if="savedCredentialIndexers.some((object: any) => object.indexer_name === indexer['indexer_name'])" />
+            <Chip label="Not setup" icon="pi pi-times" class="status" v-if="indexer['credentials']['method'] != 'prowlarr' && !savedCredentialIndexers.some((object: any) => object.indexer_name === indexer['indexer_name'])" />
+            <ToggleSwitch class="toggle-switch" @change="updateEnbaledIndexers(indexer['indexer_name'])" :modelValue="enabledIndexers.includes(Object.keys(indexerMap).find((key) => indexerMap[key] === indexer['indexer_name'])!)" />
           </div>
         </div>
       </template>
@@ -55,15 +55,15 @@ export default {
   methods: {
     selectIndexer(indexer: any) {
       this.selectedIndexer.fillableFields = Object.keys(indexer['login']['fields']).filter((key) => key !== 'extra')
-      this.selectedIndexer.name = indexer['site_name']
+      this.selectedIndexer.name = indexer['indexer_name']
       this.editCredentialsDialog = true
     },
     credentialsSaved() {
       this.savedCredentialIndexers.push({ indexer_name: this.selectIndexer.name })
       this.editCredentialsDialog = false
     },
-    updateEnbaledTrackers(siteName: string) {
-      const indexerId = Object.keys(this.trackerMap).find((key) => this.trackerMap[key] === siteName) ?? ''
+    updateEnbaledIndexers(indexerName: string) {
+      const indexerId = Object.keys(this.indexerMap).find((key) => this.indexerMap[key] === indexerName) ?? ''
       const indexerEnabled = this.enabledIndexers.includes(indexerId)
       if (indexerEnabled) {
         this.enabledIndexers = this.enabledIndexers.filter((id) => id !== indexerId)
@@ -76,11 +76,11 @@ export default {
   },
 
   setup() {
-    const { getConfig, savedCredentials, getTrackerMap } = useApi()
+    const { getConfig, savedCredentials, getIndexerMap } = useApi()
     const indexersConfig = ref<object>({})
     const savedCredentialIndexers = ref<object[]>([])
     const enabledIndexers = ref<Array<string>>([])
-    const trackerMap = ref<any>({})
+    const indexerMap = ref<any>({})
 
     onMounted(() => {
       enabledIndexers.value = JSON.parse(localStorage.getItem('enabledIndexers') ?? '[]')
@@ -90,15 +90,15 @@ export default {
       savedCredentials().then((data) => {
         savedCredentialIndexers.value = data
       })
-      getTrackerMap().then((data) => {
-        trackerMap.value = data
+      getIndexerMap().then((data) => {
+        indexerMap.value = data
       })
     })
     return {
       indexersConfig,
       savedCredentialIndexers,
       enabledIndexers,
-      trackerMap,
+      indexerMap,
     }
   },
 }

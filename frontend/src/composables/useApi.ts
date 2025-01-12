@@ -6,9 +6,9 @@ export function useApi<T>() {
   const loading = ref<boolean>(false)
   const error = ref<T | null>(null)
 
-  const getUserStats = async (date_from: string, date_to: string, tracker_ids: string) => {
+  const getUserStats = async (date_from: string, date_to: string, indexer_ids: string) => {
     try {
-      const response = await fetchData(`/stats?date_from=${date_from}&date_to=${date_to}&tracker_ids=${tracker_ids}`)
+      const response = await fetchData(`/stats?date_from=${date_from}&date_to=${date_to}&indexer_ids=${indexer_ids}`)
       data.value = response as T
       return response
     } catch (err) {
@@ -18,7 +18,7 @@ export function useApi<T>() {
     }
   }
   //todo : call this on first page load and make the result accessible everywhere instead
-  const getTrackerMap = async () => {
+  const getIndexerMap = async () => {
     try {
       const response = await fetchData(`/prowlarrConfig`)
       data.value = response as T
@@ -63,5 +63,5 @@ export function useApi<T>() {
     }
   }
 
-  return { data, loading, error, getUserStats, getTrackerMap, getConfig, saveCredentials, savedCredentials }
+  return { data, loading, error, getUserStats, getIndexerMap, getConfig, saveCredentials, savedCredentials }
 }

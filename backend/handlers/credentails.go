@@ -3,7 +3,7 @@ package handlers
 import (
 	"backend/database"
 	"backend/helpers"
-	"backend/trackers"
+	"backend/indexers"
 	"fmt"
 	"io"
 	"net/http"
@@ -21,13 +21,13 @@ func SaveCredentials(c echo.Context) error {
 
 	jsonBody := gjson.Parse(string(body))
 
-	prowlarrIds := getProwlarrTrackerIdsFromDB()
+	prowlarrIds := getProwlarrIndexerIdsFromDB()
 
 	indexer := jsonBody.Get("indexer").Str
-	trackerId := ""
+	indexerId := ""
 	for key, value := range prowlarrIds {
 		if strings.Contains(value, indexer) {
-			trackerId = key
+			indexerId = key
 			break
 		}
 	}
@@ -36,11 +36,11 @@ func SaveCredentials(c echo.Context) error {
 	cookies := loginAndGetCookies(indexer, username, password)
 
 	insertSQL := `INSERT OR REPLACE INTO credentials (
-	tracker_id, username, password, cookies, api_key
+	indexer_id, username, password, cookies, api_key
 	) VALUES (?, ?, ?, ?, ?);
 	`
 
-	args := []interface{}{trackerId, username, password, cookies, jsonBody.Get("api_key").Str}
+	args := []interface{}{indexerId, username, password, cookies, jsonBody.Get("api_key").Str}
 
 	database.ExecuteQuery(insertSQL, args)
 
@@ -48,18 +48,18 @@ func SaveCredentials(c echo.Context) error {
 }
 
 func loginAndGetCookies(indexer string, username string, password string) string {
-	siteInfo := helpers.GetIndexerInfo(indexer)
-	if !siteInfo.Exists() {
+	indexerInfo := helpers.GetIndexerInfo(indexer)
+	if !indexerInfo.Exists() {
 		return ""
 	}
-	trackerType := trackers.DetermineTrackerType(indexer)
+	indexerType := indexers.DetermineIndexerType(indexer)
 
-	loginURL := siteInfo.Get("login.url").String()
+	loginURL := indexerInfo.Get("login.url").String()
 
-	if trackerType == "unit3d" {
-		return trackers.LoginAndGetCookiesUnit3d(username, password, loginURL, siteInfo.Get("domain").Str)
-	} else if trackerType == "anthelion" {
-		return trackers.LoginAndGetCookiesAnthelion(username, password, loginURL, siteInfo)
+	if indexerType == "unit3d" {
+		return indexers.LoginAndGetCookiesUnit3d(username, password, loginURL, indexerInfo.Get("domain").Str)
+	} else if indexerType == "anthelion" {
+		return indexers.LoginAndGetCookiesAnthelion(username, password, loginURL, indexerInfo)
 	}
 
 	return ""
@@ -68,12 +68,12 @@ func loginAndGetCookies(indexer string, username string, password string) string
 
 // returns the indexers that have their credentials registered in Dasharr's db by the user
 func SavedCredentials(c echo.Context) error {
-	sql := `SELECT tracker_id from credentials`
+	sql := `SELECT indexer_id from credentials`
 	results := database.ExecuteQuery(sql, []interface{}{})
-	indexerNames := getProwlarrTrackerIdsFromDB()
+	indexerNames := getProwlarrIndexerIdsFromDB()
 
 	for _, obj := range results {
-		if id, ok := obj["tracker_id"].(int64); ok {
+		if id, ok := obj["indexer_id"].(int64); ok {
 			obj["indexer_name"] = strings.TrimSuffix(indexerNames[fmt.Sprint(id)], " (API)")
 		}
 	}

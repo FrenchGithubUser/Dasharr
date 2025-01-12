@@ -43,13 +43,13 @@ func RemoveNilEntries(data []map[string]interface{}) []map[string]interface{} {
 func GetIndexerInfo(indexerName string) gjson.Result {
 
 	indexersInfo, _ := os.ReadFile("config/config.json")
-	indexerInfo := gjson.Get(string(indexersInfo), fmt.Sprintf(`#[site_name=="%s"]`, indexerName))
+	indexerInfo := gjson.Get(string(indexersInfo), fmt.Sprintf(`#[indexer_name=="%s"]`, indexerName))
 	return indexerInfo
 	// result := gjson.Get(string(indexersInfo), "#")
 
 	// result.ForEach(func(key, value gjson.Result) bool {
-	// 	siteName := value.Get("site_name").String()
-	// 	return !strings.Contains(siteName, indexerName)
+	// 	indexerName := value.Get("indexer_name").String()
+	// 	return !strings.Contains(indexerName, indexerName)
 	// })
 
 	// return result
