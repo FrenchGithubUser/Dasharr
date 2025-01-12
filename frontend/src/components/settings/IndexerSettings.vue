@@ -1,6 +1,7 @@
 <template>
   <div id="indexer-settings">
-    <div class="note">Note: Indexers need to be setup in Prowlarr first in order to work with Dasharr, even if the credentials from Prowlarr are not used</div>
+    <div class="note">Indexers need to be setup in Prowlarr first in order to work with Dasharr, even if the credentials from Prowlarr are not used</div>
+    <div class="note">Enabling/disabling an indexer will only affect its visibility on the dashboard, data will always be collected</div>
     <Card v-for="indexer in indexersConfig" :key="indexer['site_name']" class="indexer-card">
       <template #content>
         <div class="indexer">
