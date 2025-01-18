@@ -39,6 +39,7 @@ func InitDB() error {
     artists_rank INTEGER DEFAULT 0,
     overall_rank INTEGER DEFAULT 0,
     bonus_points INTEGER DEFAULT 0,
+    buffer INTEGER DEFAULT 0,
     collected_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	);`
 
