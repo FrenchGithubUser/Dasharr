@@ -5,5 +5,5 @@ if [[ -z "${API_KEY}" ]]; then
   exit 1
 fi
 
-curl -X POST http://localhost:1323/update \
-     -H "X-API-Key: ${API_KEY}" \
+curl -X GET http://localhost:1323/update \
+     -H "X-API-Key: ${API_KEY}"

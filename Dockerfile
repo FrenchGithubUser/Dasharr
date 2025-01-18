@@ -52,6 +52,6 @@ ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["sh", "-c", "\
     service cron start && \
     ./backend/backend & \
-    nginx -g 'daemon off;' &
-    ./app/init.sh"]
+    nginx -g 'daemon off;' & \
+    /app/init.sh"]
 
