@@ -6,18 +6,20 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: BACKEND_URL,
-  headers: {
-    'X-API-Key': localStorage.getItem('api-key'),
-  },
 })
 
-axios.interceptors.response.use(
+apiClient.interceptors.request.use((config) => {
+  config.headers['X-API-Key'] = localStorage.getItem('api-key')
+  return config
+})
+
+apiClient.interceptors.response.use(
   (response) => {
     return response
   },
   (error) => {
-    if (error.response && error.response.status !== 200) {
-      router.push({ name: 'RegisterPage' })
+    if (error.response.status !== 200) {
+      router.push({ name: 'Register' })
     }
     return Promise.reject(error)
   },

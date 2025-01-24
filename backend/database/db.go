@@ -3,12 +3,27 @@ package database
 import (
 	"backend/helpers"
 	"database/sql"
+	"fmt"
 	"log"
+	"os"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func InitDB() error {
+
+	wd, _ := os.Getwd()
+	fmt.Println("Working Directory:", wd)
+
+	entries, err := os.ReadDir("./")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, e := range entries {
+		fmt.Println(e.Name())
+	}
+
 	createStatsTableSQL := `
 	CREATE TABLE IF NOT EXISTS user_stats (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -60,7 +75,7 @@ func InitDB() error {
 }
 
 func ExecuteQuery(query string, args []interface{}) []map[string]interface{} {
-	db, err := sql.Open("sqlite3", "config/database.db")
+	db, err := sql.Open("sqlite3", "config/database/database.db")
 	if err != nil {
 		log.Fatal(err)
 	}

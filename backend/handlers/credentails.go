@@ -70,6 +70,9 @@ func loginAndGetCookies(indexer string, username string, password string) string
 func SavedCredentials(c echo.Context) error {
 	sql := `SELECT indexer_id from credentials`
 	results := database.ExecuteQuery(sql, []interface{}{})
+	if results == nil {
+		results = []map[string]interface{}{}
+	}
 	indexerNames := getProwlarrIndexerIdsFromDB()
 
 	for _, obj := range results {

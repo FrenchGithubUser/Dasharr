@@ -1,1 +1,2 @@
-backend/config/database.db
+backend/config/database/database.db
+backend/prowlarr/

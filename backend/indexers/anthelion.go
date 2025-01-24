@@ -55,7 +55,7 @@ func ConstructRequestAnthelion(prowlarrIndexerConfig gjson.Result, indexerName s
 	userPath := getUserPathAnthelion(baseUrl, cookieStr)
 	req, _ := http.NewRequest("GET", baseUrl+userPath, nil)
 	req = addCookiesToRequest(req, cookieStr)
-	fmt.Println(req)
+	// fmt.Println(req)
 
 	return req
 }

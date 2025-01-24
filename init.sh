@@ -12,7 +12,7 @@ if [[ -z "${API_KEY}" ]]; then
   exit 1
 fi
 
-database_path="/backend/config/database.db"
+database_path="/backend/config/database/database.db"
 
 if [ -e "$database_path" ]; then
   echo "Database already exists, skipping user initialization"
@@ -21,11 +21,10 @@ else
 
   sqlite3 "$database_path" "VACUUM;"
 
+  echo "Database created"
+
   curl -X GET http://localhost:1323/initdb \
     -H "X-API-Key: ${API_KEY}"
 fi
 
-
-curl -X GET http://localhost:1323/initdb \
-  -H "X-API-Key: ${API_KEY}"
 

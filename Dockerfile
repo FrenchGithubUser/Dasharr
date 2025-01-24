@@ -1,6 +1,6 @@
 FROM golang:1.23-bullseye AS backend-builder
 
-WORKDIR /app/backend
+WORKDIR /backend
 
 COPY backend/ .
 ARG CGO_ENABLED=1
@@ -9,7 +9,7 @@ RUN go build -a -installsuffix cgo -o backend server.go
 
 FROM node:23-alpine AS frontend-builder
 
-WORKDIR /app/frontend
+WORKDIR /frontend
 
 COPY frontend/ .
 RUN npm install --production
@@ -22,24 +22,24 @@ FROM golang:1.23-bullseye
 
 # RUN apk add --no-cache bash curl ca-certificates tini nginx
 RUN apt update
-RUN apt install -y tini nginx cron libc6
+RUN apt install -y tini nginx cron libc6 sqlite3
 
 COPY nginx.conf /etc/nginx/nginx.conf
 
-WORKDIR /app
+WORKDIR /
 
-COPY --from=backend-builder /app/backend/backend ./backend/backend
-COPY --from=backend-builder /app/backend/config/ ./backend/config/
-COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
+COPY --from=backend-builder /backend/backend ./backend/backend
+COPY --from=backend-builder /backend/config/ ./backend/config/
+COPY --from=frontend-builder /frontend/dist ./frontend/dist
 
-COPY cron.sh /app/cron.sh
-RUN chmod +x /app/cron.sh
+COPY cron.sh /cron.sh
+RUN chmod +x /cron.sh
 
-COPY init.sh /app/init.sh
-RUN chmod +x /app/init.sh
+COPY init.sh /init.sh
+RUN chmod +x /init.sh
 
 # Collect data every 6 hours
-RUN echo "0 */6 * * * /app/cron.sh" > /etc/cron.d/app-cron
+RUN echo "0 */6 * * * /cron.sh" > /etc/cron.d/cron
 
 # backend
 EXPOSE 1323 
@@ -51,7 +51,8 @@ ENTRYPOINT ["/usr/bin/tini", "--"]
 
 CMD ["sh", "-c", "\
     service cron start && \
-    ./backend/backend & \
+    cd backend && ./backend & \
     nginx -g 'daemon off;' & \
-    /app/init.sh"]
+    cd / && /init.sh && \
+    wait"]
 
