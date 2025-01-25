@@ -16,7 +16,7 @@ jobs:
 
     name: Call Docker Build
 
-    uses: FrenchGithubUser/Dasharr/workflows/reusable-docker-build.yaml@main
+    uses: FrenchGithubUser/Dasharr/.github/workflows/reusable-docker-build.yaml@main
 
     # set permissions here to be equal or greater than what's required in the Reusable Workflow
     # Permisions set here for the GITHUB_TOKEN are then passed to the Reusable Workflow
