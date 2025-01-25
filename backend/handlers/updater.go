@@ -33,7 +33,7 @@ func Update(c echo.Context) error {
 
 	for indexers.Next() {
 		indexers.Scan(ptrs...)
-		// Make a copy of indexerConfig to avoid race conditions
+		// Make a copy of prowlarrIndexerConfig to avoid race conditions
 		prowlarrIndexerConfigCopy := make([]interface{}, len(prowlarrIndexerConfig))
 		copy(prowlarrIndexerConfigCopy, prowlarrIndexerConfig)
 
