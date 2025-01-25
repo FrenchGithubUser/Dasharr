@@ -1,15 +1,16 @@
 services:
   dasharr:
     container_name: dasharr
-    image: dasharr
+    image: ghcr.io/frenchgithubuser/dasharr:latest
     ports:
-      - "1323:1323" 
+      # frontend interface
       - "3000:80"   
+      # api port
+      - "1323:1323" 
     environment:
       - API_KEY=your-secure-api-key
     volumes:
+      - ./database/:/backend/config/database/
       # dasharr needs to read your prowlarr database to use your indexers' credentials
-      # these need to be absolute paths
-      - /docker-test/prowlarr.db:/backend/prowlarr/prowlarr.db:ro
-      - /docker-test/database.db:/backend/config/database/database.db
+      - /absolute/path/to/prowlarr/volume/config/prowlarr.db:/backend/prowlarr/prowlarr.db:ro
 
