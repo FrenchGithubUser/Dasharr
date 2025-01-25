@@ -27,7 +27,7 @@ jobs:
       packages: write # needed to push docker image to ghcr.io
       pull-requests: write # needed to create and update comments in PRs
     
-    secrets:
+    # secrets:
 
       # Only needed if with:dockerhub-enable is true below
       # https://hub.docker.com/settings/security
