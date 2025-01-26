@@ -12,6 +12,10 @@ FROM node:23-alpine AS frontend-builder
 WORKDIR /frontend
 
 COPY frontend/ .
+
+# empty env var so the frontend uses the browser's url (fallback)
+RUN sed -i 's|VITE_BACKEND_URL=.*|VITE_BACKEND_URL=|' .env
+
 RUN npm install --production
 RUN npm install npm-run-all
 RUN npm run build
@@ -29,7 +33,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 WORKDIR /
 
 COPY --from=backend-builder /backend/backend ./backend/backend
-COPY --from=backend-builder /backend/config/ ./backend/config/
+COPY --from=backend-builder /backend/config_sample/ ./backend/config_sample/
 COPY --from=frontend-builder /frontend/dist ./frontend/dist
 
 COPY cron.sh /cron.sh

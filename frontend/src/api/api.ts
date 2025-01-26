@@ -2,7 +2,7 @@ import type { AxiosInstance } from 'axios' // Import AxiosInstance as a type-onl
 import axios from 'axios'
 import router from '../router'
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || window.location.origin + '/api'
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: BACKEND_URL,

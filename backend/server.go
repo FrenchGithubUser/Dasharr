@@ -11,6 +11,7 @@ import (
 
 func main() {
 	e := echo.New()
+	api := e.Group("/api")
 
 	apiKey := os.Getenv("API_KEY")
 
@@ -24,18 +25,18 @@ func main() {
 		}
 	}
 
-	e.Use(middleware.Logger())
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+	api.Use(middleware.Logger())
+	api.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{echo.GET, echo.POST, echo.PUT, echo.DELETE},
 	}))
 
-	e.GET("/initdb", handlers.InitDB, apiKeyMiddleware)
-	e.GET("/update", handlers.Update, apiKeyMiddleware)
-	e.GET("/stats", handlers.GetStats, apiKeyMiddleware)
-	e.GET("/config", handlers.GetConfig, apiKeyMiddleware)
-	e.POST("/saveCredentials", handlers.SaveCredentials, apiKeyMiddleware)
-	e.GET("/savedCredentials", handlers.SavedCredentials, apiKeyMiddleware)
-	e.GET("/prowlarrConfig", handlers.GetProwlarrIndexerIds, apiKeyMiddleware)
+	api.GET("/initdb", handlers.InitDB, apiKeyMiddleware)
+	api.GET("/update", handlers.Update, apiKeyMiddleware)
+	api.GET("/stats", handlers.GetStats, apiKeyMiddleware)
+	api.GET("/config", handlers.GetConfig, apiKeyMiddleware)
+	api.POST("/saveCredentials", handlers.SaveCredentials, apiKeyMiddleware)
+	api.GET("/savedCredentials", handlers.SavedCredentials, apiKeyMiddleware)
+	api.GET("/prowlarrConfig", handlers.GetProwlarrIndexerIds, apiKeyMiddleware)
 	e.Logger.Fatal(e.Start(":1323"))
 }

@@ -75,7 +75,7 @@ func InitDB() error {
 }
 
 func ExecuteQuery(query string, args []interface{}) []map[string]interface{} {
-	db, err := sql.Open("sqlite3", "config/database/database.db")
+	db, err := sql.Open("sqlite3", "config/database.db")
 	if err != nil {
 		log.Fatal(err)
 	}

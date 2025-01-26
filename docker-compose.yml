@@ -3,10 +3,7 @@ services:
     container_name: dasharr
     image: ghcr.io/frenchgithubuser/dasharr:latest
     ports:
-      # frontend interface
       - "3000:80"   
-      # api port
-      - "1323:1323" 
     environment:
       - API_KEY=your-secure-api-key
     volumes:
