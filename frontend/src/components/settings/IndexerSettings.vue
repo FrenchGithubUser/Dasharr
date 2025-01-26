@@ -1,8 +1,8 @@
 <template>
   <div id="indexer-settings">
     <div class="note">Indexers need to be setup in Prowlarr first in order to work with Dasharr, even if the credentials from Prowlarr are not used</div>
-    <div class="note">Enabling/disabling an indexer will only affect its visibility on the dashboard, data will always be collected</div>
-    <Card v-for="indexer in indexersConfig" :key="indexer['indexer_name']" class="indexer-card">
+    <div class="note">Enabling/disabling an indexer here will only affect its visibility on the dashboard, data will always be collected if it is enabled in config.json</div>
+    <Card v-tooltip.top="{ value: 'To display this indexer in the dashboard, first enable it in config.json', disabled: indexer['enabled'] }" v-for="indexer in indexersConfig" :key="indexer['indexer_name']" :class="{ disabled: !indexer['enabled'], 'indexer-card': true }">
       <template #content>
         <div class="indexer">
           <div class="left">
@@ -13,7 +13,7 @@
             <div v-if="indexer['credentials']['method'] == 'prowlarr'">Credentials managed in Prowlarr</div>
             <Chip label="Already setup" icon="pi pi-check" class="status" v-if="savedCredentialIndexers.some((object: any) => object.indexer_name === indexer['indexer_name'])" />
             <Chip label="Not setup" icon="pi pi-times" class="status" v-if="indexer['credentials']['method'] != 'prowlarr' && !savedCredentialIndexers.some((object: any) => object.indexer_name === indexer['indexer_name'])" />
-            <ToggleSwitch class="toggle-switch" @change="updateEnbaledIndexers(indexer['indexer_name'])" :modelValue="enabledIndexers.includes(Object.keys(indexerMap).find((key) => indexerMap[key] === indexer['indexer_name'])!)" />
+            <ToggleSwitch class="toggle-switch" @change="updateEnbaledIndexers(indexer['indexer_name'])" :modelValue="indexer['enabled'] ? enabledIndexers.includes(Object.keys(indexerMap).find((key) => indexerMap[key] === indexer['indexer_name'])!) : false" :disabled="!indexer['enabled']" />
           </div>
         </div>
       </template>
@@ -116,6 +116,9 @@ export default {
 .indexer-card {
   margin: 5px;
   margin-bottom: 10px;
+  &.disabled {
+    background-color: rgb(170, 170, 170);
+  }
 }
 .indexer {
   display: flex;
