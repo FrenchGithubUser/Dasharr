@@ -39,3 +39,7 @@ else
   curl -X GET http://localhost:1323/api/initdb \
     -H "X-API-Key: ${API_KEY}"
 fi
+
+
+curl -X GET http://localhost:1323/api/update \
+  -H "X-API-Key: ${API_KEY}"
