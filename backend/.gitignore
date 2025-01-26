@@ -1,3 +1,4 @@
 config/database/database.db
+config/config.json
 
 prowlarr/*

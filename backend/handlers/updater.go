@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"backend/helpers"
 	"backend/indexers"
 	"database/sql"
 	"fmt"
@@ -56,58 +57,58 @@ func Update(c echo.Context) error {
 func processIndexerProwlarr(prowlarrIndexerConfig []interface{}, db *sql.DB) bool {
 	indexerName := prowlarrIndexerConfig[1].(string)
 	indexerName = strings.TrimSuffix(indexerName, " (API)")
-	// enabled := indexerConfig.Get("fillable.enabled").Bool()
 
-	// if enabled {
-	fmt.Printf("Updating %s's stats\n", indexerName)
+	if helpers.GetIndexerInfo(indexerName).Get("enabled").Bool() {
 
-	indexerStats, error := indexers.GetUserData(gjson.Parse(prowlarrIndexerConfig[2].(string)), indexerName, prowlarrIndexerConfig[0].(int64))
-	if error != nil {
-		return false
-	}
+		fmt.Printf("Updating %s's stats\n", indexerName)
 
-	insertSQL := `INSERT INTO user_stats (
+		indexerStats, error := indexers.GetUserData(gjson.Parse(prowlarrIndexerConfig[2].(string)), indexerName, prowlarrIndexerConfig[0].(int64))
+		if error != nil {
+			return false
+		}
+
+		insertSQL := `INSERT INTO user_stats (
 			indexer_id, uploaded_torrents, uploaded_amount, downloaded_amount, snatched, seeding, leeching,
 			ratio, required_ratio, last_access, torrent_comments, invited, forum_posts, warned, class,
 			donor, uploaded_rank, downloaded_rank, uploads_rank, requests_rank, bounty_rank, posts_rank,
 			artists_rank, overall_rank, buffer, bonus_points, seeding_size, freeleech_tokens
 			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`
 
-	_, err := db.Exec(insertSQL,
-		prowlarrIndexerConfig[0],
-		indexerStats["uploaded_torrents"],
-		indexerStats["uploaded_amount"],
-		indexerStats["downloaded_amount"],
-		indexerStats["snatched"],
-		indexerStats["seeding"],
-		indexerStats["leeching"],
-		indexerStats["ratio"],
-		indexerStats["required_ratio"],
-		indexerStats["last_access"],
-		indexerStats["torrent_comments"],
-		indexerStats["invited"],
-		indexerStats["forum_posts"],
-		indexerStats["warned"],
-		indexerStats["class"],
-		indexerStats["donor"],
-		indexerStats["uploaded_rank"],
-		indexerStats["downloaded_rank"],
-		indexerStats["uploads_rank"],
-		indexerStats["requests_rank"],
-		indexerStats["bounty_rank"],
-		indexerStats["posts_rank"],
-		indexerStats["artists_rank"],
-		indexerStats["overall_rank"],
-		indexerStats["buffer"],
-		indexerStats["bonus_points"],
-		indexerStats["seeding_size"],
-		indexerStats["freeleech_tokens"],
-	)
+		_, err := db.Exec(insertSQL,
+			prowlarrIndexerConfig[0],
+			indexerStats["uploaded_torrents"],
+			indexerStats["uploaded_amount"],
+			indexerStats["downloaded_amount"],
+			indexerStats["snatched"],
+			indexerStats["seeding"],
+			indexerStats["leeching"],
+			indexerStats["ratio"],
+			indexerStats["required_ratio"],
+			indexerStats["last_access"],
+			indexerStats["torrent_comments"],
+			indexerStats["invited"],
+			indexerStats["forum_posts"],
+			indexerStats["warned"],
+			indexerStats["class"],
+			indexerStats["donor"],
+			indexerStats["uploaded_rank"],
+			indexerStats["downloaded_rank"],
+			indexerStats["uploads_rank"],
+			indexerStats["requests_rank"],
+			indexerStats["bounty_rank"],
+			indexerStats["posts_rank"],
+			indexerStats["artists_rank"],
+			indexerStats["overall_rank"],
+			indexerStats["buffer"],
+			indexerStats["bonus_points"],
+			indexerStats["seeding_size"],
+			indexerStats["freeleech_tokens"],
+		)
 
-	if err != nil {
-		fmt.Println("Failed to insert data:", err.Error())
+		if err != nil {
+			fmt.Println("Failed to insert data:", err.Error())
+		}
 	}
-	// }
 
 	return true
 }

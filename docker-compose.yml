@@ -10,7 +10,7 @@ services:
     environment:
       - API_KEY=your-secure-api-key
     volumes:
-      - ./database/:/backend/config/database/
+      - ./config/:/backend/config/
       # dasharr needs to read your prowlarr database to use your indexers' credentials
       - /absolute/path/to/prowlarr/volume/config/prowlarr.db:/backend/prowlarr/prowlarr.db:ro
 

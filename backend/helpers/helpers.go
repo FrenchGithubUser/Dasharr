@@ -44,7 +44,12 @@ func GetIndexerInfo(indexerName string) gjson.Result {
 
 	indexersInfo, _ := os.ReadFile("config/config.json")
 	indexerInfo := gjson.Get(string(indexersInfo), fmt.Sprintf(`#[indexer_name=="%s"]`, indexerName))
-	return indexerInfo
+	if indexerInfo.Exists() {
+		return indexerInfo
+	} else {
+		nonExistentIndexer := `{"enabled":false}`
+		return gjson.Parse(nonExistentIndexer)
+	}
 	// result := gjson.Get(string(indexersInfo), "#")
 
 	// result.ForEach(func(key, value gjson.Result) bool {
