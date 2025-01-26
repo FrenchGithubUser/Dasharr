@@ -2,6 +2,7 @@
     {
         "indexer_name": "Redacted",
         "abbreviation": "RED",
+        "enabled": false,
         "credentials": {
             "method": "prowlarr"
         },
@@ -34,6 +35,7 @@
     {
         "indexer_name": "GazelleGames",
         "abbreviation": "GGn",
+        "enabled": false,
         "credentials": {
             "method": "prowlarr"
         },
@@ -67,6 +69,7 @@
     {
         "indexer_name": "Orpheus",
         "abbreviation": "OPS",
+        "enabled": false,
         "credentials": {
             "method": "prowlarr"
         },
@@ -99,6 +102,7 @@
     {
         "indexer_name": "Anthelion",
         "abbreviation": "ATH",
+        "enabled": false,
         "login": {
             "url": "https://anthelion.me/login.php",
             "body": "form_data",
@@ -137,6 +141,7 @@
     {
         "indexer_name": "Blutopia",
         "abbreviation": "BLU",
+        "enabled": false,
         "domain": "blutopia.cc",
         "login": {
             "url": "https://blutopia.cc/login",
@@ -175,6 +180,7 @@
     {
         "indexer_name": "Aither",
         "abbreviation": "Aither",
+        "enabled": false,
         "domain": "aither.cc",
         "login": {
             "url": "https://aither.cc/login",
@@ -213,6 +219,7 @@
     {
         "indexer_name": "ItaTorrents",
         "abbreviation": "ItaTorrents",
+        "enabled": false,
         "domain": "itatorrents.xyz",
         "login": {
             "url": "https://itatorrents.xyz/login",
@@ -251,6 +258,7 @@
     {
         "indexer_name": "Oldtoons",
         "abbreviation": "OTW",
+        "enabled": false,
         "domain": "oldtoons.world",
         "login": {
             "url": "https://oldtoons.world/login",

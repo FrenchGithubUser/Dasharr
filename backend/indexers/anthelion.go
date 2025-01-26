@@ -145,7 +145,7 @@ func ProcessIndexerResponseAnthelion(bodyString string, indexerConfig gjson.Resu
 	// warned, _ := strconv.Atoi(doc.Find(indexerConfig.Get("scraping.xpaths.warned").Str).Text())
 	// results["warned"] = warned > 0
 
-	fmt.Println(results)
+	// fmt.Println(results)
 
 	return results
 }

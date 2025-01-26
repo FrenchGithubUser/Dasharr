@@ -27,6 +27,7 @@ func Update(c echo.Context) error {
 		ptrs[i] = &prowlarrIndexerConfig[i]
 	}
 
+	// quite arbitrary value, can be changed if needed
 	const maxConcurrency = 10
 	semaphore := make(chan struct{}, maxConcurrency)
 	var wg sync.WaitGroup
@@ -43,10 +44,7 @@ func Update(c echo.Context) error {
 			defer wg.Done()
 			defer func() { <-semaphore }()
 
-			//temp only do blu
-			// if configCopy[1] == "Blutopia (API)" {
 			processIndexerProwlarr(prowlarrIndexerConfigCopy, db)
-			// }
 		}(prowlarrIndexerConfigCopy)
 	}
 
