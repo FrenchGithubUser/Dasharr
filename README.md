@@ -1,6 +1,6 @@
 # Dasharr
 
- Dashboard of your trackers' usage
+ Dashboard of your indexers' usage
 
  > Note: this project is in very early stages, expect broken stuff and breaking changes, this is not ready for public use yet !
 
@@ -15,6 +15,6 @@
 
 - Copy [docker-compose.yml](./docker-compose.yml), edit the fields you want (most importantly the `API_KEY` env var).
 - Run the container `docker-compose up -d`
-- Go to the config volume and enable the trackers you want in `config.json`
-- Visit the webui and configure the trackers that require configuration
+- Go to the config volume and enable the indexers you want in `config.json`
+- Visit the webui and configure the indexers that require configuration
 - Restart the container
