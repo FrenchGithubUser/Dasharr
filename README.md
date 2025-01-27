@@ -2,6 +2,12 @@
 
  Dashboard of your indexers' usage
 
+ <p align="center">
+  <a href="https://discord.gg/4vd7qAaFwX">
+    <img src="https://img.shields.io/badge/Discord-Chat-5865F2?logo=discord&logoColor=white" alt="Join Our Discord">
+  </a>
+</p>
+
  > Note: this project is in very early stages, expect broken stuff and breaking changes !
 
  ![header](images/0.png)
