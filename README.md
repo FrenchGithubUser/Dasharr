@@ -13,6 +13,15 @@
  ![header](images/0.png)
  ![header](images/1.png)
 
+## Why ?
+
+We often times don't realize the evolution of the stats on torrent indexers, this fixes it. Also :
+
+- see the impact of automated tools
+- see the impact of new uploads
+- have a clearer view of how much bounty can be spent on requests every n days
+- because it's cool
+
  <details> <summary> <b> Supported indexers </b> </summary>
 
  * ANT
@@ -26,6 +35,8 @@
  * LST
 
 </details>
+
+
 
  ## Quickstart
 

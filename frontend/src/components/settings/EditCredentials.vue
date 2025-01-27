@@ -12,7 +12,7 @@ import { Button, InputText } from 'primevue'
 
 import { useApi } from '@/composables/useApi'
 export default {
-  emits: ['credentialsSaved'],
+  emits: ['credentials-saved'],
   components: {
     InputText,
     // eslint-disable-next-line vue/no-reserved-component-names
@@ -38,7 +38,7 @@ export default {
       this.saveCredentials({ ...this.filledFields, indexer: this.indexerName }).then(() => {
         this.loading = false
         //todo: check why this doesn't work
-        this.$emit('credentialsSaved')
+        this.$emit('credentials-saved')
       })
     },
   },

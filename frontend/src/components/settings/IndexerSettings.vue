@@ -11,14 +11,16 @@
           <div class="right">
             <Button v-if="indexer['credentials']['method'] == 'built_in'" icon="pi pi-pencil" @click="selectIndexer(indexer)" />
             <div v-if="indexer['credentials']['method'] == 'prowlarr'">Credentials managed in Prowlarr</div>
-            <Chip label="Already setup" icon="pi pi-check" class="status" v-if="savedCredentialIndexers.some((object: any) => object.indexer_name === indexer['indexer_name'])" />
-            <Chip label="Not setup" icon="pi pi-times" class="status" v-if="indexer['credentials']['method'] != 'prowlarr' && !savedCredentialIndexers.some((object: any) => object.indexer_name === indexer['indexer_name'])" />
+            <div v-else>
+              <Chip label="Credentials saved" icon="pi pi-check" class="status" v-if="areIndexerCredentialsSaved(indexer)" />
+              <Chip label="Credentials missing" icon="pi pi-times" class="status" v-if="!areIndexerCredentialsSaved(indexer)" />
+            </div>
             <ToggleSwitch class="toggle-switch" @change="updateEnbaledIndexers(indexer['indexer_name'])" :modelValue="indexer['enabled'] ? enabledIndexers.includes(Object.keys(indexerMap).find((key) => indexerMap[key] === indexer['indexer_name'])!) : false" :disabled="!indexer['enabled']" />
           </div>
         </div>
       </template>
     </Card>
-    <Dialog v-model:visible="editCredentialsDialog" modal header="Edit credentials" @credentialsSaved="credentialsSaved"><EditCredentials :fields="selectedIndexer.fillableFields" :indexerName="selectedIndexer.name" /></Dialog>
+    <Dialog v-model:visible="editCredentialsDialog" modal header="Edit credentials" @credentialsSaved="credentialsSaved"><EditCredentials @credentials-saved="credentialsSaved" :fields="selectedIndexer.fillableFields" :indexerName="selectedIndexer.name" /></Dialog>
   </div>
 </template>
 
@@ -52,6 +54,11 @@ export default {
       },
     }
   },
+  computed: {
+    areIndexerCredentialsSaved() {
+      return (indexer: any) => this.savedCredentialIndexers.some((obj: any) => obj.indexer_name === indexer.indexer_name)
+    },
+  },
   methods: {
     selectIndexer(indexer: any) {
       this.selectedIndexer.fillableFields = Object.keys(indexer['login']['fields']).filter((key) => key !== 'extra')
@@ -59,7 +66,8 @@ export default {
       this.editCredentialsDialog = true
     },
     credentialsSaved() {
-      this.savedCredentialIndexers.push({ indexer_name: this.selectIndexer.name })
+      this.savedCredentialIndexers.push({ indexer_name: this.selectedIndexer.name })
+      console.log(this.savedCredentialIndexers)
       this.editCredentialsDialog = false
     },
     updateEnbaledIndexers(indexerName: string) {
@@ -71,7 +79,6 @@ export default {
         this.enabledIndexers.push(indexerId)
       }
       localStorage.setItem('enabledIndexers', JSON.stringify(this.enabledIndexers))
-      console.log(this.enabledIndexers)
     },
   },
 
@@ -94,6 +101,7 @@ export default {
         indexerMap.value = data
       })
     })
+
     return {
       indexersConfig,
       savedCredentialIndexers,
