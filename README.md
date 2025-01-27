@@ -13,6 +13,20 @@
  ![header](images/0.png)
  ![header](images/1.png)
 
+ <details> <summary> <b> Supported indexers </b> </summary>
+
+ * ANT
+ * RED
+ * GGn
+ * OPS
+ * BLU
+ * Aither
+ * ItaTorrents
+ * OTW
+ * LST
+
+</details>
+
  ## Quickstart
 
  ### Docker
