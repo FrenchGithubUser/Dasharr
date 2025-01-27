@@ -15,4 +15,5 @@
 - Run the container `docker-compose up -d`
 - Go to the config volume and enable the indexers you want in `config.json`
 - Visit the webui and configure the indexers that require configuration
-- Restart the container
+- Restart the container, a first stats collection will be made
+- New stats will be collected for the enabled indexers every 6h
