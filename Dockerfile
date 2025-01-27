@@ -43,7 +43,9 @@ COPY init.sh /init.sh
 RUN chmod +x /init.sh
 
 # Collect data every 6 hours
-RUN echo "0 */6 * * * /cron.sh" > /etc/cron.d/cron
+ADD crontab /etc/cron.d/cron
+RUN chmod 0644 /etc/cron.d/cron
+RUN touch /var/log/cron.log
 
 # backend
 EXPOSE 1323 
@@ -54,7 +56,7 @@ EXPOSE 80
 ENTRYPOINT ["/usr/bin/tini", "--"]
 
 CMD ["sh", "-c", "\
-    service cron start && \
+    cron && \
     cd backend && ./backend & \
     nginx -g 'daemon off;' & \
     cd / && /init.sh && \

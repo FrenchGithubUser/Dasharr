@@ -1,10 +1,11 @@
 #!/bin/bash
 
+# used for the cron job
+printenv >> /etc/environment &
+
 database_path="/backend/config/database.db"
 config_json_path="/backend/config/config.json"
 config_sample_json_path="/backend/config_sample/config_sample.json"
-
-
 
 
 if [ -e "$config_json_path" ]; then
