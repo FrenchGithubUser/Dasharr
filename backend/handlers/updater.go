@@ -1,30 +1,45 @@
 package handlers
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 	"os"
 
 	"github.com/labstack/echo/v4"
-	"github.com/tidwall/gjson"
-	"github.com/tidwall/sjson"
 )
 
 // apply the necessary modifications to update an already existing dasharr install
 // it will run every time the container is updated or restarted
 func Update(c echo.Context) error {
-	existingConfig, _ := os.ReadFile("config/config.json")
-	updatedConfig, _ := os.ReadFile("config_sample/config_sample.json")
+	existingData, _ := os.ReadFile("config/config.json")
+	updatedData, _ := os.ReadFile("config_sample/config_sample.json")
 
-	result := string(existingConfig)
-	gjson.ParseBytes(updatedConfig).ForEach(func(_, value gjson.Result) bool {
-		if !gjson.Get(string(existingConfig), `#(indexer_name=="`+value.Get("indexer_name").String()+`")`).Exists() {
-			result, _ = sjson.SetRaw(result, "-1", value.Raw)
+	var existingConfig, updatedConfig []map[string]interface{}
+	_ = json.Unmarshal(existingData, &existingConfig)
+	_ = json.Unmarshal(updatedData, &updatedConfig)
+
+	existingMap := make(map[string]map[string]interface{})
+	for _, obj := range existingConfig {
+		indexerName := obj["indexer_name"].(string)
+		existingMap[indexerName] = obj
+	}
+
+	for _, updatedObj := range updatedConfig {
+		indexerName := updatedObj["indexer_name"].(string)
+		if existingObj, found := existingMap[indexerName]; found {
+			for k, v := range updatedObj {
+				if k == "enabled" {
+					continue
+				}
+				existingObj[k] = v
+			}
+		} else {
+			existingConfig = append(existingConfig, updatedObj)
 		}
-		return true
-	})
+	}
 
-	os.WriteFile("config/config.json", []byte(result), 0644)
-	fmt.Println("Updated dasharr's config")
+	result, _ := json.MarshalIndent(existingConfig, "", "  ")
+	os.WriteFile("config/config.json", result, 0644)
+
 	return c.JSON(http.StatusOK, "")
 }

@@ -33,7 +33,8 @@ func SaveCredentials(c echo.Context) error {
 	}
 	username := jsonBody.Get("username").Str
 	password := jsonBody.Get("password").Str
-	cookies := loginAndGetCookies(indexer, username, password)
+	twoFaCode := jsonBody.Get("twoFaCode").Str
+	cookies := loginAndGetCookies(indexer, username, password, twoFaCode)
 
 	insertSQL := `INSERT OR REPLACE INTO credentials (
 	indexer_id, username, password, cookies, api_key
@@ -47,7 +48,7 @@ func SaveCredentials(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]string{"status": "success"})
 }
 
-func loginAndGetCookies(indexer string, username string, password string) string {
+func loginAndGetCookies(indexer string, username string, password string, twoFaCode string) string {
 	indexerInfo := helpers.GetIndexerInfo(indexer)
 	if !indexerInfo.Exists() {
 		return ""
@@ -57,7 +58,7 @@ func loginAndGetCookies(indexer string, username string, password string) string
 	loginURL := indexerInfo.Get("login.url").String()
 
 	if indexerType == "unit3d" {
-		return indexers.LoginAndGetCookiesUnit3d(username, password, loginURL, indexerInfo.Get("domain").Str)
+		return indexers.LoginAndGetCookiesUnit3d(username, password, twoFaCode, loginURL, indexerInfo.Get("domain").Str)
 	} else if indexerType == "anthelion" {
 		return indexers.LoginAndGetCookiesAnthelion(username, password, loginURL, indexerInfo)
 	}

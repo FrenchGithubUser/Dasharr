@@ -149,6 +149,7 @@
             "fields": {
                 "username": "username",
                 "password": "password",
+                "twoFaCode": "",
                 "extra": {
                     "_username": ""
                 }
@@ -188,6 +189,7 @@
             "fields": {
                 "username": "username",
                 "password": "password",
+                "twoFaCode": "",
                 "extra": {
                     "_username": ""
                 }
@@ -227,6 +229,7 @@
             "fields": {
                 "username": "username",
                 "password": "password",
+                "twoFaCode": "",
                 "extra": {
                     "_username": ""
                 }
@@ -266,6 +269,7 @@
             "fields": {
                 "username": "username",
                 "password": "password",
+                "twoFaCode": "",
                 "extra": {
                     "_username": ""
                 }
@@ -305,6 +309,7 @@
             "fields": {
                 "username": "username",
                 "password": "password",
+                "twoFaCode": "",
                 "extra": {
                     "_username": ""
                 }
@@ -344,6 +349,7 @@
             "fields": {
                 "username": "username",
                 "password": "password",
+                "twoFaCode": "",
                 "extra": {
                     "_username": ""
                 }

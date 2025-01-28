@@ -16,7 +16,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func LoginAndGetCookiesUnit3d(username string, password string, loginURL string, domain string) string {
+func LoginAndGetCookiesUnit3d(username string, password string, twoFaCode string, loginURL string, domain string) string {
 	formData := url.Values{}
 	formData.Add("username", username)
 	formData.Add("password", password)
@@ -31,7 +31,13 @@ func LoginAndGetCookiesUnit3d(username string, password string, loginURL string,
 
 	client := &http.Client{
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			return http.ErrUseLastResponse // Prevents redirect
+			if twoFaCode != "" {
+				// redirect needs to be done for 2fa
+				return nil
+			} else {
+				// Prevents redirect
+				return http.ErrUseLastResponse
+			}
 		},
 	}
 	jar, _ := cookiejar.New(nil)
@@ -78,6 +84,12 @@ func LoginAndGetCookiesUnit3d(username string, password string, loginURL string,
 	defer resp.Body.Close()
 
 	cookies := resp.Cookies()
+
+	if twoFaCode != "" {
+		twoFaResp := twoFaHandlerUnit3d(resp, twoFaCode, cookies, domain)
+		cookies = twoFaResp.Cookies()
+	}
+
 	// fmt.Println(resp.StatusCode)
 	cookiesStr := ""
 	for _, cookie := range cookies {
@@ -86,6 +98,81 @@ func LoginAndGetCookiesUnit3d(username string, password string, loginURL string,
 	}
 	cookiesStr = cookiesStr[:len(cookiesStr)-1]
 	return cookiesStr
+}
+
+func twoFaHandlerUnit3d(loginResponse *http.Response, twoFaCode string, loginCookies []*http.Cookie, domain string) *http.Response {
+	doc, err := goquery.NewDocumentFromReader(loginResponse.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	tokens := map[string]string{}
+
+	formData := url.Values{}
+
+	// todo : move the xpaths from hard-coded to config.json
+
+	// _token
+	token := doc.Find("main section form input:nth-of-type(1)")
+	fmt.Println(token)
+	tokenName, _ := token.Attr("name")
+	tokenValue, _ := token.Attr("value")
+	tokens[tokenName] = tokenValue
+
+	// _captcha
+	token = doc.Find("main section form input:nth-of-type(2)")
+	tokenName, _ = token.Attr("name")
+	tokenValue, _ = token.Attr("value")
+	tokens[tokenName] = tokenValue
+
+	// random string
+	token = doc.Find("main section form input:nth-of-type(3)")
+	tokenName, _ = token.Attr("name")
+	tokenValue, _ = token.Attr("value")
+	tokens[tokenName] = tokenValue
+
+	tokens["recovery_code"] = ""
+	tokens["_username"] = ""
+
+	for key, value := range tokens {
+		formData.Add(key, value)
+	}
+	formData.Add("code", twoFaCode)
+
+	req, _ := http.NewRequest("POST", fmt.Sprintf("https://%s/two-factor-challenge", domain), strings.NewReader(formData.Encode()))
+
+	req.Header.Add("Host", domain)
+	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0")
+	req.Header.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+	req.Header.Add("Accept-Language", "en-US,en;q=0.5")
+	req.Header.Add("DNT", "1")
+	req.Header.Add("Sec-GPC", "1")
+	req.Header.Add("Connection", "keep-alive")
+	req.Header.Add("Upgrade-Insecure-Requests", "1")
+	req.Header.Add("Sec-Fetch-Dest", "document")
+	req.Header.Add("Sec-Fetch-Mode", "navigate")
+	req.Header.Add("Sec-Fetch-Site", "none")
+	req.Header.Add("Sec-Fetch-User", "?1")
+	req.Header.Add("Priority", "u=0, i")
+	req.Header.Add("TE", "trailers")
+	req.Header.Add("Origin", "https://"+domain)
+	req.Header.Add("Referer", "https://"+domain+"/two-factor-challenge")
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	for _, cookie := range loginCookies {
+		req.AddCookie(cookie)
+	}
+
+	client := &http.Client{
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			// Prevents redirect
+			return http.ErrUseLastResponse
+			// return nil
+		},
+	}
+	twoFaResponse, _ := client.Do(req)
+
+	return twoFaResponse
 }
 
 func getHiddenTokensUnit3d(url string, domain string) map[string]map[string]string {

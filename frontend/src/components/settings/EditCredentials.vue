@@ -35,6 +35,7 @@ export default {
   methods: {
     submitCredentials() {
       this.loading = true
+      console.log(this.filledFields)
       this.saveCredentials({ ...this.filledFields, indexer: this.indexerName }).then(() => {
         this.loading = false
         //todo: check why this doesn't work
