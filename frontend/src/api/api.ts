@@ -18,7 +18,7 @@ apiClient.interceptors.response.use(
     return response
   },
   (error) => {
-    if (error.response.status !== 200) {
+    if (error.response.status !== 200 && error.response.data.message == 'invalid_api_key') {
       router.push({ name: 'Register' })
     }
     return Promise.reject(error)

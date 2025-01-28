@@ -19,7 +19,7 @@ func main() {
 		return func(c echo.Context) error {
 			providedKey := c.Request().Header.Get("X-API-Key")
 			if providedKey != apiKey {
-				return echo.NewHTTPError(http.StatusUnauthorized, "Invalid API key")
+				return echo.NewHTTPError(http.StatusUnauthorized, "invalid_api_key")
 			}
 			return next(c)
 		}

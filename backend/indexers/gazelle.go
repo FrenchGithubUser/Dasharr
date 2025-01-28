@@ -1,6 +1,8 @@
 package indexers
 
 import (
+	"bytes"
+	"encoding/json"
 	"io"
 	"log"
 	"net/http"
@@ -11,31 +13,49 @@ import (
 
 func ConstructRequestGazelle(prowlarrIndexerConfig gjson.Result, indexerName string) *http.Request {
 	baseUrl := prowlarrIndexerConfig.Get("baseUrl").Str
+	var apiUrl string
 	if indexerName == "GazelleGames" {
-		baseUrl += "api.php?request="
+		apiUrl = "api.php?request="
 	} else {
-		baseUrl += "ajax.php?action="
+		apiUrl = "ajax.php?action="
 	}
-	apiKey := prowlarrIndexerConfig.Get("apikey").Str
-	userId := getUserIdGazelle(baseUrl, apiKey, indexerName)
-	req, _ := http.NewRequest("GET", baseUrl+"user&id="+strconv.Itoa(int(userId)), nil)
-	if indexerName == "GazelleGames" {
-		req.Header.Add("X-API-Key", apiKey)
+
+	var req *http.Request
+	if indexerName == "BroadcasTheNet" {
+		apiKey := prowlarrIndexerConfig.Get("apiKey").Str
+		payload := map[string]interface{}{
+			"method":  "userInfo",
+			"params":  []string{apiKey},
+			"jsonrpc": "2.0",
+			"id":      1,
+		}
+		body, _ := json.Marshal(payload)
+		req, _ = http.NewRequest("POST", baseUrl, bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", "application/json")
 	} else {
-		req.Header.Add("Authorization", apiKey)
+		apiKey := prowlarrIndexerConfig.Get("apikey").Str
+		userId := getUserIdGazelle(apiUrl, apiKey, indexerName)
+		req, _ = http.NewRequest("GET", apiUrl+"user&id="+strconv.Itoa(int(userId)), nil)
+		if indexerName == "GazelleGames" {
+			req.Header.Add("X-API-Key", apiKey)
+		} else {
+			req.Header.Add("Authorization", apiKey)
+		}
 	}
 	return req
 }
 
 func ProcessIndexerResponseGazelle(results gjson.Result, indexerInfoJson gjson.Result) map[string]interface{} {
-
-	results = results.Get("response")
+	if indexerInfoJson.Get("indexer_name").Str == "BroadcasTheNet" {
+		results = results.Get("result")
+	} else {
+		results = results.Get("response")
+	}
 	mappedResults := make(map[string]interface{})
 	indexerInfoJson.Get("stats_keys").ForEach(func(key, value gjson.Result) bool {
 		mappedResults[value.String()] = results.Get(key.String()).Value()
 		return true
 	})
-	// fmt.Println(mappedResults)
 
 	return mappedResults
 }

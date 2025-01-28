@@ -100,6 +100,21 @@
         }
     },
     {
+        "indexer_name": "BroadcasTheNet",
+        "abbreviation": "BTN",
+        "enabled": false,
+        "credentials": {
+            "method": "prowlarr"
+        },
+        "stats_keys": {
+            "Upload": "uploaded_amount",
+            "Download": "downloaded_amount",
+            "Snatches": "snatched",
+            "User": "class",
+            "Bonus": "bonus_points"
+        }
+    },
+    {
         "indexer_name": "Anthelion",
         "abbreviation": "ANT",
         "enabled": false,
@@ -113,8 +128,7 @@
                 "extra": {
                     "login": "Log+in"
                 }
-            },
-            "cookie_name": "session"
+            }
         },
         "credentials": {
             "method": "built_in"

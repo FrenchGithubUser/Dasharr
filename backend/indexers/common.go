@@ -16,10 +16,8 @@ func ConstructIndexerRequest(prowlarrIndexerConfig gjson.Result, indexerName str
 	if indexerType == "gazelle" {
 		req = ConstructRequestGazelle(prowlarrIndexerConfig, indexerName)
 	} else if indexerType == "unit3d" {
-		// LoginAndGetCookiesUnit3d(username, password, loginURL, indexerInfo.Get("domain").Str)
 		req = ConstructRequestUnit3d(indexerName, indexerId)
 	} else if indexerType == "anthelion" {
-		// LoginAndGetCookiesAnthelion(username, password, loginURL, indexerInfo)
 		req = ConstructRequestAnthelion(prowlarrIndexerConfig, indexerName, indexerId)
 	}
 
@@ -54,7 +52,7 @@ func DetermineIndexerType(indexerName string) string {
 		return false
 	}
 
-	if contains(indexerName, []string{"Orpheus", "Redacted", "GazelleGames"}) {
+	if contains(indexerName, []string{"Orpheus", "Redacted", "GazelleGames", "BroadcasTheNet"}) {
 		return "gazelle"
 	} else if contains(indexerName, []string{"Blutopia", "Aither", "ItaTorrents", "Oldtoons", "LST", "seedpool"}) {
 		return "unit3d"
