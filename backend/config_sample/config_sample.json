@@ -101,7 +101,7 @@
     },
     {
         "indexer_name": "Anthelion",
-        "abbreviation": "ATH",
+        "abbreviation": "ANT",
         "enabled": false,
         "login": {
             "url": "https://anthelion.me/login.php",
@@ -109,8 +109,8 @@
             "fields": {
                 "username": "username",
                 "password": "password",
+                "twoFaCode": "twofa",
                 "extra": {
-                    "twofa": "",
                     "login": "Log+in"
                 }
             },

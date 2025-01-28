@@ -86,8 +86,8 @@ func LoginAndGetCookiesUnit3d(username string, password string, twoFaCode string
 	cookies := resp.Cookies()
 
 	if twoFaCode != "" {
-		twoFaResp := twoFaHandlerUnit3d(resp, twoFaCode, cookies, domain)
-		cookies = twoFaResp.Cookies()
+		resp = twoFaHandlerUnit3d(resp, twoFaCode, cookies, domain)
+		cookies = resp.Cookies()
 	}
 
 	// fmt.Println(resp.StatusCode)
@@ -95,6 +95,11 @@ func LoginAndGetCookiesUnit3d(username string, password string, twoFaCode string
 	for _, cookie := range cookies {
 		// fmt.Println(cookie)
 		cookiesStr += fmt.Sprintf("%s=%s;", cookie.Name, cookie.Value)
+	}
+	// this condition doesn't work on all trackers, find a better solution to see if the login failed
+	if !strings.Contains(cookiesStr, "laravel_session") {
+		// login failed
+		return ""
 	}
 	cookiesStr = cookiesStr[:len(cookiesStr)-1]
 	return cookiesStr

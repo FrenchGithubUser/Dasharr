@@ -15,13 +15,14 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func LoginAndGetCookiesAnthelion(username string, password string, loginURL string, indexerInfo gjson.Result) string {
+func LoginAndGetCookiesAnthelion(username string, password string, twoFaCode string, loginURL string, indexerInfo gjson.Result) string {
 
 	// body := indexerInfo.Get("login.body").String()
 	fields := indexerInfo.Get("login.fields").Map()
 	formData := url.Values{}
 	formData.Add(fields["username"].String(), username)
 	formData.Add(fields["password"].String(), password)
+	formData.Add(fields["twoFaCode"].String(), twoFaCode)
 
 	extraFields := fields["extra"].Map()
 	for key, val := range extraFields {
@@ -43,6 +44,10 @@ func LoginAndGetCookiesAnthelion(username string, password string, loginURL stri
 	cookiesStr := ""
 	for _, cookie := range cookies {
 		cookiesStr += fmt.Sprintf("%s=%s;", cookie.Name, cookie.Value)
+	}
+	if !strings.Contains(cookiesStr, "session") {
+		// login failed
+		return ""
 	}
 	cookiesStr = cookiesStr[:len(cookiesStr)-1]
 	return cookiesStr

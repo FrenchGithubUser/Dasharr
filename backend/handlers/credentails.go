@@ -36,16 +36,17 @@ func SaveCredentials(c echo.Context) error {
 	twoFaCode := jsonBody.Get("twoFaCode").Str
 	cookies := loginAndGetCookies(indexer, username, password, twoFaCode)
 
-	insertSQL := `INSERT OR REPLACE INTO credentials (
-	indexer_id, username, password, cookies, api_key
-	) VALUES (?, ?, ?, ?, ?);
-	`
+	if cookies != "" {
+		insertSQL := `INSERT OR REPLACE INTO credentials (
+		indexer_id, username, password, cookies, api_key
+		) VALUES (?, ?, ?, ?, ?);`
+		args := []interface{}{indexerId, username, password, cookies, jsonBody.Get("api_key").Str}
+		database.ExecuteQuery(insertSQL, args)
+		return c.JSON(http.StatusOK, map[string]string{"status": "success"})
+	} else {
+		return c.JSON(http.StatusUnauthorized, map[string]string{"error": "login_failed"})
+	}
 
-	args := []interface{}{indexerId, username, password, cookies, jsonBody.Get("api_key").Str}
-
-	database.ExecuteQuery(insertSQL, args)
-
-	return c.JSON(http.StatusOK, map[string]string{"status": "success"})
 }
 
 func loginAndGetCookies(indexer string, username string, password string, twoFaCode string) string {
@@ -60,7 +61,7 @@ func loginAndGetCookies(indexer string, username string, password string, twoFaC
 	if indexerType == "unit3d" {
 		return indexers.LoginAndGetCookiesUnit3d(username, password, twoFaCode, loginURL, indexerInfo.Get("domain").Str)
 	} else if indexerType == "anthelion" {
-		return indexers.LoginAndGetCookiesAnthelion(username, password, loginURL, indexerInfo)
+		return indexers.LoginAndGetCookiesAnthelion(username, password, twoFaCode, loginURL, indexerInfo)
 	}
 
 	return ""
