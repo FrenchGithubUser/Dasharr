@@ -28,6 +28,7 @@ We often times don't realize the evolution of the stats on torrent indexers, thi
  * RED
  * GGn
  * OPS
+ * BTN
  * BLU
  * Aither
  * ItaTorrents
