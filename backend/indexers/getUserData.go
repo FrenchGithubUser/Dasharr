@@ -3,6 +3,7 @@ package indexers
 import (
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 
@@ -30,7 +31,9 @@ func GetUserData(prowlarrIndexerConfig gjson.Result, indexerName string, indexer
 		results = ProcessIndexerResponse(resp, indexerName)
 		return results, nil
 	} else {
-		fmt.Println(resp.Status)
+
+		body, _ := io.ReadAll(resp.Body)
+		fmt.Println(string(body))
 		fmt.Printf("Indexer %s did not reply with status 200 OK, skipping.", indexerName)
 		// fmt.Println(resp)
 		return map[string]interface{}{}, errors.New("An error occured when getting indexer's data")

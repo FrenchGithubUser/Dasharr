@@ -1,6 +1,7 @@
 <template>
   <div id="indexer-settings">
     <div class="note">Indexers need to be setup in Prowlarr first in order to work with Dasharr, even if the credentials from Prowlarr are not used</div>
+    <div class="note">Make sure the API keys configured in prowlarr have access to user stats</div>
     <div class="note">Enabling/disabling an indexer here will only affect its visibility on the dashboard, data will always be collected if it is enabled in config.json</div>
     <Card v-tooltip.top="{ value: 'To display this indexer in the dashboard, first enable it in config.json', disabled: indexer['enabled'] }" v-for="indexer in indexersConfig" :key="indexer['indexer_name']" :class="{ disabled: !indexer['enabled'], 'indexer-card': true }">
       <template #content>

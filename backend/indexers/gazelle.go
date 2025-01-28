@@ -15,9 +15,9 @@ func ConstructRequestGazelle(prowlarrIndexerConfig gjson.Result, indexerName str
 	baseUrl := prowlarrIndexerConfig.Get("baseUrl").Str
 	var apiUrl string
 	if indexerName == "GazelleGames" {
-		apiUrl = "api.php?request="
+		apiUrl = baseUrl + "api.php?request="
 	} else {
-		apiUrl = "ajax.php?action="
+		apiUrl = baseUrl + "ajax.php?action="
 	}
 
 	var req *http.Request
@@ -61,7 +61,7 @@ func ProcessIndexerResponseGazelle(results gjson.Result, indexerInfoJson gjson.R
 }
 
 func getUserIdGazelle(baseUrl string, apiKey string, indexerName string) int64 {
-	req, _ := http.NewRequest("", "", nil)
+	var req *http.Request
 	if indexerName == "GazelleGames" {
 		req, _ = http.NewRequest("GET", baseUrl+"quick_user", nil)
 		req.Header.Add("X-API-Key", apiKey)
@@ -79,7 +79,6 @@ func getUserIdGazelle(baseUrl string, apiKey string, indexerName string) int64 {
 
 	body, _ := io.ReadAll(resp.Body)
 	if resp.Status == "200 OK" {
-		// fmt.Println(string(body))
 		return gjson.Get(string(body), "response.id").Int()
 	} else {
 		return -1
