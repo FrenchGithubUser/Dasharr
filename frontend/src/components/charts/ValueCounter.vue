@@ -37,7 +37,7 @@ export default {
 
     const startCounter = (targetValue: number) => {
       // currentValue.value = 0
-      const step = targetValue / (props.duration / 10)
+      const step = targetValue / (props.duration / 100)
 
       // let currentStep = 0
       const interval = setInterval(() => {

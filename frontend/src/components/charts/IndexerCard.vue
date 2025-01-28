@@ -8,7 +8,7 @@
         <template #content>
           <div class="explanation">Amounts increase during the selected period</div>
           <div class="counters">
-            <ValueCounter v-for="(stat, label) in statsToDisplay" :key="label" :value="stat" :meaning="label" :unit="['uploaded_amount', 'downloaded_amount'].indexOf(label.toString()) > -1 ? 'GiB' : ''" :duration="500" />
+            <ValueCounter v-for="(stat, label) in statsToDisplay" :key="label" :value="stat" :meaning="label" :unit="['uploaded_amount', 'downloaded_amount'].indexOf(label.toString()) > -1 ? 'GiB' : ''" :duration="800" />
           </div>
         </template>
       </Card>

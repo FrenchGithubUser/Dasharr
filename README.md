@@ -46,7 +46,7 @@ We often times don't realize the evolution of the stats on torrent indexers, thi
 
 - Copy [docker-compose.yml](./docker-compose.yml), edit the fields you want (most importantly the `API_KEY` env var).
 - Run the container `docker-compose up -d`
-- Go to the config volume and enable the indexers you want in `config.json`
-- Visit the webui and configure the indexers that require configuration
+- Go to the config volume and enable the indexers you want in `config.json` (set the `enabled` field to `true`)
+- Visit the webui and configure the indexers that require credentials configuration in the settings
 - Restart the container, a first stats collection will be made
-- New stats will be collected for the enabled indexers every 6h
+- New stats will be collected for the enabled indexers (in `config.json`) every 6h
