@@ -1,7 +1,7 @@
 <template>
   <div id="edit-credentials">
     <div class="form">
-      <InputText v-for="field in fields" :key="field" v-model="filledFields[field]" :placeholder="field" class="item" />
+      <InputText v-for="field in orderedFields" :key="field" v-model="filledFields[field]" :placeholder="field" class="item" />
       <Button type="submit" label="Submit" class="item" @click="submitCredentials" :loading="loading" />
     </div>
   </div>
@@ -21,6 +21,7 @@ export default {
   props: {
     fields: {
       type: Array as () => string[],
+      required: true,
     },
     indexerName: {
       type: String,
@@ -31,6 +32,21 @@ export default {
       filledFields: {} as { [key: string]: string },
       loading: false,
     }
+  },
+  computed: {
+    orderedFields() {
+      // should be flexible to add more ordered fields
+      const order = ['username', 'password', 'twoFaCode']
+      const fieldsCopy = [...this.fields]
+      return fieldsCopy.sort((a, b) => {
+        const aIndex = order.indexOf(a)
+        const bIndex = order.indexOf(b)
+        if (aIndex === -1 && bIndex === -1) return 0
+        if (aIndex === -1) return 1
+        if (bIndex === -1) return -1
+        return aIndex - bIndex
+      })
+    },
   },
   methods: {
     submitCredentials() {
