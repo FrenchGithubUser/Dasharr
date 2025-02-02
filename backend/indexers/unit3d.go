@@ -269,12 +269,11 @@ func ProcessIndexerResponseUnit3d(bodyString string, indexerConfig gjson.Result)
 	doc, _ := goquery.NewDocumentFromReader(strings.NewReader(bodyString))
 
 	uploadRegexResult := re.FindStringSubmatch(doc.Find(indexerConfig.Get("scraping.xpaths.uploaded_amount").Str).Text())
-	cleanUpload, err := strconv.ParseFloat(uploadRegexResult[1], 64)
-	if err != nil {
-		log.Fatal(err)
-		log.Fatal("An error occured while parsing unit3d's response")
+	if len(uploadRegexResult) == 0 {
+		fmt.Printf("An error occured while parsing %s's response", indexerConfig.Get("indexer_name").Str)
 		return results
 	}
+	cleanUpload, _ := strconv.ParseFloat(uploadRegexResult[1], 64)
 	results["uploaded_amount"] = helpers.AnyUnitToBytes(cleanUpload, uploadRegexResult[2])
 
 	downloadRegexResult := re.FindStringSubmatch(doc.Find(indexerConfig.Get("scraping.xpaths.downloaded_amount").Str).Text())
