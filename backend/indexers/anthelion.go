@@ -104,7 +104,12 @@ func ProcessIndexerResponseAnthelion(bodyString string, indexerConfig gjson.Resu
 	doc, _ := goquery.NewDocumentFromReader(strings.NewReader(bodyString))
 
 	uploadRegexResult := re.FindStringSubmatch(doc.Find(indexerConfig.Get("scraping.xpaths.uploaded_amount").Str).Text())
-	cleanUpload, _ := strconv.ParseFloat(uploadRegexResult[1], 64)
+	cleanUpload, err := strconv.ParseFloat(uploadRegexResult[1], 64)
+	if err != nil {
+		log.Fatal(err)
+		log.Fatal("An error occured while parsing Anthelion's response")
+		return results
+	}
 	results["uploaded_amount"] = helpers.AnyUnitToBytes(cleanUpload, uploadRegexResult[2])
 
 	downloadRegexResult := re.FindStringSubmatch(doc.Find(indexerConfig.Get("scraping.xpaths.downloaded_amount").Str).Text())
