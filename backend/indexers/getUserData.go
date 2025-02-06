@@ -12,7 +12,7 @@ import (
 
 func GetUserData(prowlarrIndexerConfig gjson.Result, indexerName string, indexerId int64) (map[string]interface{}, error) {
 
-	var results map[string]interface{}
+	// var results map[string]interface{}
 
 	req := ConstructIndexerRequest(prowlarrIndexerConfig, indexerName, indexerId)
 	if req.URL == nil {
@@ -28,8 +28,8 @@ func GetUserData(prowlarrIndexerConfig gjson.Result, indexerName string, indexer
 	defer resp.Body.Close()
 
 	if resp.Status == "200 OK" {
-		results = ProcessIndexerResponse(resp, indexerName)
-		return results, nil
+		results, processErr := ProcessIndexerResponse(resp, indexerName)
+		return results, processErr
 	} else {
 
 		body, _ := io.ReadAll(resp.Body)

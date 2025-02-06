@@ -2,6 +2,8 @@ package indexers
 
 import (
 	"backend/helpers"
+	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -27,7 +29,7 @@ func ConstructIndexerRequest(prowlarrIndexerConfig gjson.Result, indexerName str
 }
 
 // todo : cookie refresh
-func ProcessIndexerResponse(response *http.Response, indexerName string) map[string]interface{} {
+func ProcessIndexerResponse(response *http.Response, indexerName string) (map[string]interface{}, error) {
 	indexerInfo := helpers.GetIndexerInfo(indexerName)
 	body, _ := io.ReadAll(response.Body)
 	results := map[string]interface{}{}
@@ -43,7 +45,12 @@ func ProcessIndexerResponse(response *http.Response, indexerName string) map[str
 		results = ProcessIndexerResponseMAM(gjson.Parse(string(body)), indexerInfo)
 	}
 
-	return results
+	var err error = nil
+	if results == nil || len(results) == 0 {
+		err = errors.New(fmt.Sprintf("An error occured wile parsing %s's results", indexerName))
+	}
+
+	return results, err
 }
 
 func DetermineIndexerType(indexerName string) string {
