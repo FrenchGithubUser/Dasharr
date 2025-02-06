@@ -61,7 +61,7 @@ func loginAndGetCookies(indexer string, username string, password string, twoFaC
 	if indexerType == "unit3d" {
 		return indexers.LoginAndGetCookiesUnit3d(username, password, twoFaCode, loginURL, indexerInfo.Get("domain").Str)
 	} else if indexerType == "anthelion" {
-		return indexers.LoginAndGetCookiesAnthelion(username, password, twoFaCode, loginURL, indexerInfo)
+		return indexers.LoginAndGetCookiesGazelleScrape(username, password, twoFaCode, loginURL, indexerInfo)
 	}
 
 	return ""

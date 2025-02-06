@@ -11,7 +11,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func ConstructRequestGazelle(prowlarrIndexerConfig gjson.Result, indexerName string) *http.Request {
+func ConstructRequestGazelleApi(prowlarrIndexerConfig gjson.Result, indexerName string) *http.Request {
 	baseUrl := prowlarrIndexerConfig.Get("baseUrl").Str
 	var apiUrl string
 	if indexerName == "GazelleGames" {
@@ -34,7 +34,7 @@ func ConstructRequestGazelle(prowlarrIndexerConfig gjson.Result, indexerName str
 		req.Header.Set("Content-Type", "application/json")
 	} else {
 		apiKey := prowlarrIndexerConfig.Get("apikey").Str
-		userId := getUserIdGazelle(apiUrl, apiKey, indexerName)
+		userId := getUserIdGazelleApi(apiUrl, apiKey, indexerName)
 		req, _ = http.NewRequest("GET", apiUrl+"user&id="+strconv.Itoa(int(userId)), nil)
 		if indexerName == "GazelleGames" {
 			req.Header.Add("X-API-Key", apiKey)
@@ -45,7 +45,7 @@ func ConstructRequestGazelle(prowlarrIndexerConfig gjson.Result, indexerName str
 	return req
 }
 
-func ProcessIndexerResponseGazelle(results gjson.Result, indexerInfoJson gjson.Result) map[string]interface{} {
+func ProcessIndexerResponseGazelleApi(results gjson.Result, indexerInfoJson gjson.Result) map[string]interface{} {
 	if indexerInfoJson.Get("indexer_name").Str == "BroadcasTheNet" {
 		results = results.Get("result")
 	} else {
@@ -60,7 +60,7 @@ func ProcessIndexerResponseGazelle(results gjson.Result, indexerInfoJson gjson.R
 	return mappedResults
 }
 
-func getUserIdGazelle(baseUrl string, apiKey string, indexerName string) int64 {
+func getUserIdGazelleApi(baseUrl string, apiKey string, indexerName string) int64 {
 	var req *http.Request
 	if indexerName == "GazelleGames" {
 		req, _ = http.NewRequest("GET", baseUrl+"quick_user", nil)

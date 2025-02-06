@@ -15,7 +15,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func LoginAndGetCookiesAnthelion(username string, password string, twoFaCode string, loginURL string, indexerInfo gjson.Result) string {
+func LoginAndGetCookiesGazelleScrape(username string, password string, twoFaCode string, loginURL string, indexerInfo gjson.Result) string {
 
 	// body := indexerInfo.Get("login.body").String()
 	fields := indexerInfo.Get("login.fields").Map()
@@ -53,11 +53,11 @@ func LoginAndGetCookiesAnthelion(username string, password string, twoFaCode str
 	return cookiesStr
 }
 
-func ConstructRequestAnthelion(prowlarrIndexerConfig gjson.Result, indexerName string, indexerId int64) *http.Request {
+func ConstructRequestGazelleScrape(prowlarrIndexerConfig gjson.Result, indexerName string, indexerId int64) *http.Request {
 	baseUrl := prowlarrIndexerConfig.Get("baseUrl").Str
 
 	cookieStr := database.GetIndexerCookies(indexerId)
-	userPath := getUserPathAnthelion(baseUrl, cookieStr)
+	userPath := getUserPathGazelleScrape(baseUrl, cookieStr)
 	req, _ := http.NewRequest("GET", baseUrl+userPath, nil)
 	req = addCookiesToRequest(req, cookieStr)
 	// fmt.Println(req)
@@ -65,7 +65,7 @@ func ConstructRequestAnthelion(prowlarrIndexerConfig gjson.Result, indexerName s
 	return req
 }
 
-func getUserPathAnthelion(baseUrl string, cookieStr string) string {
+func getUserPathGazelleScrape(baseUrl string, cookieStr string) string {
 	// req, _ := http.NewRequest("", "", nil)
 	req, _ := http.NewRequest("GET", baseUrl, nil)
 
@@ -95,7 +95,7 @@ func getUserPathAnthelion(baseUrl string, cookieStr string) string {
 	}
 }
 
-func ProcessIndexerResponseAnthelion(bodyString string, indexerConfig gjson.Result) map[string]interface{} {
+func ProcessIndexerResponseGazelleScrape(bodyString string, indexerConfig gjson.Result) map[string]interface{} {
 	//todo: handle cookie refresh
 	results := map[string]interface{}{}
 	re := regexp.MustCompile(`([\d\.]+)[ \x{00a0}]?\s?(GiB|MiB|TiB|KiB|B)`)
@@ -105,7 +105,7 @@ func ProcessIndexerResponseAnthelion(bodyString string, indexerConfig gjson.Resu
 
 	uploadRegexResult := re.FindStringSubmatch(doc.Find(indexerConfig.Get("scraping.xpaths.uploaded_amount").Str).Text())
 	if len(uploadRegexResult) == 0 {
-		fmt.Printf("An error occured while parsing Anthelion's response")
+		fmt.Printf("An error occured while parsing GazelleScrape's response")
 		return results
 	}
 	cleanUpload, _ := strconv.ParseFloat(uploadRegexResult[1], 64)

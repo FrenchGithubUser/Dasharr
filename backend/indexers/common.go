@@ -13,12 +13,12 @@ func ConstructIndexerRequest(prowlarrIndexerConfig gjson.Result, indexerName str
 	req := &http.Request{}
 	indexerType := DetermineIndexerType(indexerName)
 
-	if indexerType == "gazelle" {
-		req = ConstructRequestGazelle(prowlarrIndexerConfig, indexerName)
+	if indexerType == "gazelleApi" {
+		req = ConstructRequestGazelleApi(prowlarrIndexerConfig, indexerName)
 	} else if indexerType == "unit3d" {
 		req = ConstructRequestUnit3d(indexerName, indexerId)
 	} else if indexerType == "anthelion" {
-		req = ConstructRequestAnthelion(prowlarrIndexerConfig, indexerName, indexerId)
+		req = ConstructRequestGazelleScrape(prowlarrIndexerConfig, indexerName, indexerId)
 	} else if indexerType == "MAM" {
 		req = ConstructRequestMAM(prowlarrIndexerConfig)
 	}
@@ -33,12 +33,12 @@ func ProcessIndexerResponse(response *http.Response, indexerName string) map[str
 	results := map[string]interface{}{}
 	indexerType := DetermineIndexerType(indexerName)
 
-	if indexerType == "gazelle" {
-		results = ProcessIndexerResponseGazelle(gjson.Parse(string(body)), indexerInfo)
+	if indexerType == "gazelleApi" {
+		results = ProcessIndexerResponseGazelleApi(gjson.Parse(string(body)), indexerInfo)
 	} else if indexerType == "unit3d" {
 		results = ProcessIndexerResponseUnit3d(string(body), indexerInfo)
 	} else if indexerType == "anthelion" {
-		results = ProcessIndexerResponseAnthelion(string(body), indexerInfo)
+		results = ProcessIndexerResponseGazelleScrape(string(body), indexerInfo)
 	} else if indexerType == "MAM" {
 		results = ProcessIndexerResponseMAM(gjson.Parse(string(body)), indexerInfo)
 	}
@@ -57,7 +57,7 @@ func DetermineIndexerType(indexerName string) string {
 	}
 
 	if contains(indexerName, []string{"Orpheus", "Redacted", "GazelleGames", "BroadcasTheNet"}) {
-		return "gazelle"
+		return "gazelleApi"
 	} else if contains(indexerName, []string{"Blutopia", "Aither", "ItaTorrents", "Oldtoons", "LST", "seedpool"}) {
 		return "unit3d"
 	} else if contains(indexerName, []string{"Anthelion"}) {
