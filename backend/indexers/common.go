@@ -19,6 +19,8 @@ func ConstructIndexerRequest(prowlarrIndexerConfig gjson.Result, indexerName str
 		req = ConstructRequestUnit3d(indexerName, indexerId)
 	} else if indexerType == "anthelion" {
 		req = ConstructRequestAnthelion(prowlarrIndexerConfig, indexerName, indexerId)
+	} else if indexerType == "MAM" {
+		req = ConstructRequestMAM(prowlarrIndexerConfig)
 	}
 
 	return req
@@ -37,6 +39,8 @@ func ProcessIndexerResponse(response *http.Response, indexerName string) map[str
 		results = ProcessIndexerResponseUnit3d(string(body), indexerInfo)
 	} else if indexerType == "anthelion" {
 		results = ProcessIndexerResponseAnthelion(string(body), indexerInfo)
+	} else if indexerType == "MAM" {
+		results = ProcessIndexerResponseMAM(gjson.Parse(string(body)), indexerInfo)
 	}
 
 	return results
@@ -58,6 +62,8 @@ func DetermineIndexerType(indexerName string) string {
 		return "unit3d"
 	} else if contains(indexerName, []string{"Anthelion"}) {
 		return "anthelion"
+	} else if contains(indexerName, []string{"MyAnonamouse"}) {
+		return "MAM"
 	}
 	return "unknown"
 }

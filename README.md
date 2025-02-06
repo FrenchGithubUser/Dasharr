@@ -24,16 +24,17 @@ We often times don't realize the evolution of the stats on torrent indexers, thi
 
  <details> <summary> <b> Supported indexers </b> </summary>
 
- * ANT
- * RED
- * GGn
- * OPS
- * BTN
- * BLU
  * Aither
+ * ANT
+ * BLU
+ * BTN
+ * GGn
  * ItaTorrents
- * OTW
  * LST
+ * MAM
+ * OPS
+ * OTW
+ * RED
  * seedpool
 
 </details>

@@ -1,5 +1,20 @@
 [
     {
+        "indexer_name": "MyAnonamouse",
+        "abbreviation": "MAM",
+        "enabled": false,
+        "credentials": {
+            "method": "prowlarr"
+        },
+        "stats_keys": {
+            "uploaded_bytes": "uploaded_amount",
+            "downloaded_bytes": "downloaded_amount",
+            "ratio": "ratio",
+            "seedbonus": "bonus_points",
+            "classname": "class"
+        }
+    },
+    {
         "indexer_name": "Redacted",
         "abbreviation": "RED",
         "enabled": false,
