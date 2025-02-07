@@ -1,17 +1,46 @@
 @import './base.css';
 
-.p-card {
-  border-radius: 0.5em;
-  border: 1px rgba(0, 0, 0, 0.2) solid;
-  box-shadow: none !important;
-  /* box-shadow:
-    0px 0px 115px -88px var(--main-color) inset,
-    0px 2px 4px 0px rgba(0, 0, 0, 0.07),
-    0px 4px 8px 0px rgba(0, 0, 0, 0.07),
-    0px 8px 16px 0px rgba(0, 0, 0, 0.07),
-    0px 16px 32px 0px rgba(0, 0, 0, 0.07),
-    0px 32px 64px 0px rgba(0, 0, 0, 0.07); */
+body,
+div {
+  color: white;
+  background-color: var(--dark-main);
 }
+
+.p-chip-label {
+  background-color: var(--p-chip-background);
+  color: black;
+}
+
+
+:root {
+  --outer-border-radius: 0.5em;
+  --inner-border-radius: 0.7em;
+  --dark-main: #1b1b1b;
+}
+
+.p-dialog {
+  border: 1px var(--dark-main) solid !important;
+  border-radius: var(--outer-border-radius);
+}
+
+.p-card {
+  border-radius: var(--outer-border-radius);
+
+  .p-card-body {
+    border-radius: var(--inner-border-radius);
+  }
+
+  border: 1px rgba(255, 255, 255, 0.2) solid;
+  padding: 1px;
+  box-shadow: none !important;
+}
+
+.vue-apexcharts,
+.apexcharts-canvas {
+  border-radius: var(--outer-border-radius);
+  overflow: hidden;
+}
+
 
 .p-datepicker-input {
   text-align: center;

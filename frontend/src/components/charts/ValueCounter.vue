@@ -1,7 +1,10 @@
 <template>
   <Card class="value-counter">
     <template #content>
-      <div>{{ value % 1 === 0 ? currentValue.toFixed(0) : currentValue.toFixed(2) }} {{ unit }}</div>
+      <!-- counter too laggy
+      TODO: make it smoother -->
+      <!-- <div>{{ value % 1 === 0 ? currentValue.toFixed(0) : currentValue.toFixed(2) }} {{ unit }}</div> -->
+      <div>{{ value?.toFixed(2) }}</div>
       <div>{{ meaning }}</div>
     </template>
   </Card>

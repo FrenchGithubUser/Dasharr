@@ -111,6 +111,8 @@ export default {
   }
   .line-chart {
     width: 50%;
+    margin-right: 3px;
+    margin-left: 3px;
   }
 }
 </style>

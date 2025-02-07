@@ -52,6 +52,16 @@ export default defineComponent({
         //     format: 'yy-MM-ddTHH:mm:ss',
         //   },
         // },
+        theme: {
+          mode: 'dark',
+          palette: 'palette8',
+          monochrome: {
+            enabled: true,
+            color: '#F86624',
+            shadeTo: 'dark',
+            shadeIntensity: 0.95,
+          },
+        },
       },
     }
   },
