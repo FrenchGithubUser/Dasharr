@@ -6,6 +6,11 @@ div {
   background-color: var(--dark-main);
 }
 
+.p-datepicker-panel,
+.p-datepicker-header {
+  background-color: var(--dark-main) !important;
+}
+
 .p-chip-label {
   background-color: var(--p-chip-background);
   color: black;
