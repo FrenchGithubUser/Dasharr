@@ -19,7 +19,7 @@ func ConstructIndexerRequest(prowlarrIndexerConfig gjson.Result, indexerName str
 		req = ConstructRequestGazelleApi(prowlarrIndexerConfig, indexerName)
 	} else if indexerType == "unit3d" {
 		req = ConstructRequestUnit3d(indexerName, indexerId)
-	} else if indexerType == "anthelion" {
+	} else if indexerType == "gazelleScrape" {
 		req = ConstructRequestGazelleScrape(prowlarrIndexerConfig, indexerName, indexerId)
 	} else if indexerType == "MAM" {
 		req = ConstructRequestMAM(prowlarrIndexerConfig)
@@ -39,7 +39,7 @@ func ProcessIndexerResponse(response *http.Response, indexerName string) (map[st
 		results = ProcessIndexerResponseGazelleApi(gjson.Parse(string(body)), indexerInfo)
 	} else if indexerType == "unit3d" {
 		results = ProcessIndexerResponseUnit3d(string(body), indexerInfo)
-	} else if indexerType == "anthelion" {
+	} else if indexerType == "gazelleScrape" {
 		results = ProcessIndexerResponseGazelleScrape(string(body), indexerInfo)
 	} else if indexerType == "MAM" {
 		results = ProcessIndexerResponseMAM(gjson.Parse(string(body)), indexerInfo)
@@ -67,8 +67,8 @@ func DetermineIndexerType(indexerName string) string {
 		return "gazelleApi"
 	} else if contains(indexerName, []string{"Blutopia", "Aither", "ItaTorrents", "Oldtoons", "LST", "seedpool"}) {
 		return "unit3d"
-	} else if contains(indexerName, []string{"Anthelion"}) {
-		return "anthelion"
+	} else if contains(indexerName, []string{"Anthelion", "AlphaRatio"}) {
+		return "gazelleScrape"
 	} else if contains(indexerName, []string{"MyAnonamouse"}) {
 		return "MAM"
 	}

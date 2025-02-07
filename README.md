@@ -25,6 +25,7 @@ We often times don't realize the evolution of the stats on torrent indexers, thi
  <details> <summary> <b> Supported indexers </b> </summary>
 
  * Aither
+ * AR
  * ANT
  * BLU
  * BTN

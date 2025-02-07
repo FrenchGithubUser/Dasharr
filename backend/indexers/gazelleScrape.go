@@ -57,7 +57,7 @@ func ConstructRequestGazelleScrape(prowlarrIndexerConfig gjson.Result, indexerNa
 	baseUrl := prowlarrIndexerConfig.Get("baseUrl").Str
 
 	cookieStr := database.GetIndexerCookies(indexerId)
-	userPath := getUserPathGazelleScrape(baseUrl, cookieStr)
+	userPath := getUserPathGazelleScrape(baseUrl, cookieStr, indexerName)
 	req, _ := http.NewRequest("GET", baseUrl+userPath, nil)
 	req = addCookiesToRequest(req, cookieStr)
 	// fmt.Println(req)
@@ -65,7 +65,7 @@ func ConstructRequestGazelleScrape(prowlarrIndexerConfig gjson.Result, indexerNa
 	return req
 }
 
-func getUserPathGazelleScrape(baseUrl string, cookieStr string) string {
+func getUserPathGazelleScrape(baseUrl string, cookieStr string, indexerName string) string {
 	// req, _ := http.NewRequest("", "", nil)
 	req, _ := http.NewRequest("GET", baseUrl, nil)
 
@@ -84,10 +84,12 @@ func getUserPathGazelleScrape(baseUrl string, cookieStr string) string {
 	// fmt.Println(string(body))
 
 	if resp.Status == "200 OK" {
+		indexerInfo := helpers.GetIndexerInfo(indexerName)
 		doc, _ := goquery.NewDocumentFromReader(resp.Body)
-		href, found := doc.Find("body > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > ul > li:nth-of-type(10) > a").Attr("href")
+		href, found := doc.Find(indexerInfo.Get("scraping.xpaths.user_path").Str).Attr("href")
 		if !found {
-			log.Fatal("Couldn't find userid")
+			fmt.Println("Couldn't find userid")
+			return ""
 		}
 		return href
 	} else {
@@ -95,15 +97,17 @@ func getUserPathGazelleScrape(baseUrl string, cookieStr string) string {
 	}
 }
 
-func ProcessIndexerResponseGazelleScrape(bodyString string, indexerConfig gjson.Result) map[string]interface{} {
+func ProcessIndexerResponseGazelleScrape(bodyString string, indexerInfo gjson.Result) map[string]interface{} {
 	//todo: handle cookie refresh
 	results := map[string]interface{}{}
-	re := regexp.MustCompile(`([\d\.]+)[ \x{00a0}]?\s?(GiB|MiB|TiB|KiB|B)`)
+	re := regexp.MustCompile(`([\d\.]+)[ \x{00a0}]?\s?(GiB|GB|MiB|MB|TiB|TB|KiB|KB|B)`)
 	extractNumberRegex := regexp.MustCompile(`\d+`)
+	extractNumberAfterColumnRegex := regexp.MustCompile(`: (\d+)`)
+	indexerName := indexerInfo.Get("indexer_name").Str
 
 	doc, _ := goquery.NewDocumentFromReader(strings.NewReader(bodyString))
 
-	uploadRegexResult := re.FindStringSubmatch(doc.Find(indexerConfig.Get("scraping.xpaths.uploaded_amount").Str).Text())
+	uploadRegexResult := re.FindStringSubmatch(doc.Find(indexerInfo.Get("scraping.xpaths.uploaded_amount").Str).Text())
 	if len(uploadRegexResult) == 0 {
 		fmt.Printf("An error occured while parsing GazelleScrape's response")
 		return results
@@ -111,47 +115,58 @@ func ProcessIndexerResponseGazelleScrape(bodyString string, indexerConfig gjson.
 	cleanUpload, _ := strconv.ParseFloat(uploadRegexResult[1], 64)
 	results["uploaded_amount"] = helpers.AnyUnitToBytes(cleanUpload, uploadRegexResult[2])
 
-	downloadRegexResult := re.FindStringSubmatch(doc.Find(indexerConfig.Get("scraping.xpaths.downloaded_amount").Str).Text())
+	var bonusPoints string
+	if indexerName == "AlphaRatio" {
+		bonusPointsRegexResult := extractNumberAfterColumnRegex.FindStringSubmatch(strings.ReplaceAll(doc.Find(indexerInfo.Get("scraping.xpaths.bonus_points").Str).Text(), ",", ""))
+		bonusPoints = bonusPointsRegexResult[1]
+	} else {
+		bonusPoints = doc.Find(indexerInfo.Get("scraping.xpaths.bonus_points").Str).Text()
+	}
+	results["bonus_points"] = strings.ReplaceAll(bonusPoints, ",", "")
+
+	downloadRegexResult := re.FindStringSubmatch(doc.Find(indexerInfo.Get("scraping.xpaths.downloaded_amount").Str).Text())
 	cleanDownload, _ := strconv.ParseFloat(downloadRegexResult[1], 64)
 	results["downloaded_amount"] = helpers.AnyUnitToBytes(cleanDownload, downloadRegexResult[2])
 
-	// bufferRegexResult := re.FindStringSubmatch(doc.Find(indexerConfig.Get("scraping.xpaths.buffer").Str).Text())
-	// cleanBuffer, _ := strconv.ParseFloat(bufferRegexResult[1], 64)
-	// results["buffer"] = helpers.AnyUnitToBytes(cleanBuffer, downloadRegexResult[2])
+	seedingSizeXpath := indexerInfo.Get("scraping.xpaths.seeding_size")
+	if seedingSizeXpath.Exists() {
+		seedingSizeRegexResult := re.FindStringSubmatch(doc.Find(seedingSizeXpath.Str).Text())
+		cleanSeedingSize, _ := strconv.ParseFloat(seedingSizeRegexResult[1], 64)
+		results["seeding_size"] = helpers.AnyUnitToBytes(cleanSeedingSize, seedingSizeRegexResult[2])
+	}
 
-	seedingSizeRegexResult := re.FindStringSubmatch(doc.Find(indexerConfig.Get("scraping.xpaths.seeding_size").Str).Text())
-	cleanSeedingSize, _ := strconv.ParseFloat(seedingSizeRegexResult[1], 64)
-	results["seeding_size"] = helpers.AnyUnitToBytes(cleanSeedingSize, seedingSizeRegexResult[2])
-
-	bonusPoints := doc.Find(indexerConfig.Get("scraping.xpaths.bonus_points").Str).Text()
-	results["bonus_points"] = strings.ReplaceAll(bonusPoints, ",", "")
-
-	uploaded_torrents := extractNumberRegex.FindString(doc.Find(indexerConfig.Get("scraping.xpaths.uploaded_torrents").Str).Text())
+	uploaded_torrents := extractNumberRegex.FindString(doc.Find(indexerInfo.Get("scraping.xpaths.uploaded_torrents").Str).Text())
 	results["uploaded_torrents"] = uploaded_torrents
 
 	// snatched, seeding and leeching are retrieved via undocumented api : https://anthelion.me/ajax.php?action=community_stats&userid=
-	// snatched := doc.Find(indexerConfig.Get("scraping.xpaths.snatched").Str).Text()
+	// snatched := doc.Find(indexerInfo.Get("scraping.xpaths.snatched").Str).Text()
 	// results["snatched"] = snatched
 
-	// seeding := doc.Find(indexerConfig.Get("scraping.xpaths.seeding").Str).Text()
+	// seeding := doc.Find(indexerInfo.Get("scraping.xpaths.seeding").Str).Text()
 	// results["seeding"] = seeding
 
-	// leeching := doc.Find(indexerConfig.Get("scraping.xpaths.leeching").Str).Text()
+	// leeching := doc.Find(indexerInfo.Get("scraping.xpaths.leeching").Str).Text()
 	// results["leeching"] = leeching
 
-	ratio := doc.Find(indexerConfig.Get("scraping.xpaths.ratio").Str).Text()
-	results["ratio"] = ratio
+	ratioXpath := indexerInfo.Get("scraping.xpaths.seeding_size")
+	if ratioXpath.Exists() {
+		ratio := doc.Find(indexerInfo.Get(ratioXpath.Str).Str).Text()
+		results["ratio"] = ratio
+	}
 
-	torrent_comments := extractNumberRegex.FindString(doc.Find(indexerConfig.Get("scraping.xpaths.torrent_comments").Str).Text())
+	torrent_comments := extractNumberRegex.FindString(doc.Find(indexerInfo.Get("scraping.xpaths.torrent_comments").Str).Text())
 	results["torrent_comments"] = torrent_comments
 
-	forum_posts := extractNumberRegex.FindString(doc.Find(indexerConfig.Get("scraping.xpaths.forum_posts").Str).Text())
+	forum_posts := extractNumberRegex.FindString(doc.Find(indexerInfo.Get("scraping.xpaths.forum_posts").Str).Text())
 	results["forum_posts"] = forum_posts
 
-	freeleech_tokens := extractNumberRegex.FindString(doc.Find(indexerConfig.Get("scraping.xpaths.freeleech_tokens").Str).Text())
-	results["freeleech_tokens"] = freeleech_tokens
+	freeleechTokensXpath := indexerInfo.Get("scraping.xpaths.freeleech_tokens")
+	if freeleechTokensXpath.Exists() {
+		freeleech_tokens := extractNumberRegex.FindString(doc.Find(freeleechTokensXpath.Str).Text())
+		results["freeleech_tokens"] = freeleech_tokens
+	}
 
-	// warned, _ := strconv.Atoi(doc.Find(indexerConfig.Get("scraping.xpaths.warned").Str).Text())
+	// warned, _ := strconv.Atoi(doc.Find(indexerInfo.Get("scraping.xpaths.warned").Str).Text())
 	// results["warned"] = warned > 0
 
 	// fmt.Println(results)

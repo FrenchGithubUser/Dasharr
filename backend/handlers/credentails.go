@@ -4,6 +4,7 @@ import (
 	"backend/database"
 	"backend/helpers"
 	"backend/indexers"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -34,37 +35,53 @@ func SaveCredentials(c echo.Context) error {
 	username := jsonBody.Get("username").Str
 	password := jsonBody.Get("password").Str
 	twoFaCode := jsonBody.Get("twoFaCode").Str
-	cookies := loginAndGetCookies(indexer, username, password, twoFaCode)
+	loginError := loginAndSaveCookies(indexer, username, password, twoFaCode, jsonBody.Get("api_key").Str, indexerId)
 
-	if cookies != "" {
-		insertSQL := `INSERT OR REPLACE INTO credentials (
-		indexer_id, username, password, cookies, api_key
-		) VALUES (?, ?, ?, ?, ?);`
-		args := []interface{}{indexerId, username, password, cookies, jsonBody.Get("api_key").Str}
-		database.ExecuteQuery(insertSQL, args)
+	if loginError == nil {
 		return c.JSON(http.StatusOK, map[string]string{"status": "success"})
 	} else {
 		return c.JSON(http.StatusUnauthorized, map[string]string{"error": "login_failed"})
 	}
-
 }
 
-func loginAndGetCookies(indexer string, username string, password string, twoFaCode string) string {
+func loginAndSaveCookies(indexer string, username string, password string, twoFaCode string, apiKey string, indexerId string) error {
 	indexerInfo := helpers.GetIndexerInfo(indexer)
+	if indexerInfo.Get("credentials.method").Str == "prowlarr" {
+		credentials := getProwlarrCredentials(indexerId)
+		username = credentials["username"]
+		password = credentials["password"]
+	} else if username == "" {
+		// in case of cookie refresh, the credentials are not given by the user once again
+		username = database.GetIndexerUsername(indexerId)
+		password = database.GetIndexerPassword(indexerId)
+	}
 	if !indexerInfo.Exists() {
-		return ""
+		return errors.New("indexer not found in config")
 	}
 	indexerType := indexers.DetermineIndexerType(indexer)
 
 	loginURL := indexerInfo.Get("login.url").String()
 
+	var cookies string
 	if indexerType == "unit3d" {
-		return indexers.LoginAndGetCookiesUnit3d(username, password, twoFaCode, loginURL, indexerInfo.Get("domain").Str)
-	} else if indexerType == "anthelion" {
-		return indexers.LoginAndGetCookiesGazelleScrape(username, password, twoFaCode, loginURL, indexerInfo)
+		cookies = indexers.LoginAndGetCookiesUnit3d(username, password, twoFaCode, loginURL, indexerInfo.Get("domain").Str)
+	} else if indexerType == "gazelleScrape" {
+		cookies = indexers.LoginAndGetCookiesGazelleScrape(username, password, twoFaCode, loginURL, indexerInfo)
 	}
 
-	return ""
+	if cookies != "" {
+		insertSQL := `INSERT OR REPLACE INTO credentials (
+		indexer_id, username, password, cookies, api_key
+		) VALUES (?, ?, ?, ?, ?);`
+		args := []interface{}{indexerId, username, password, cookies, apiKey}
+		database.ExecuteQuery(insertSQL, args)
+		// return c.JSON(http.StatusOK, map[string]string{"status": "success"})
+		return nil
+	} else {
+		// return c.JSON(http.StatusUnauthorized, map[string]string{"error": "login_failed"})
+	}
+
+	return errors.New("an error occured getting cookies")
 
 }
 

@@ -13,13 +13,26 @@ func BytesToGiB(bits int64) float64 {
 }
 
 func AnyUnitToBytes(value float64, unit string) int64 {
-	if unit == "GiB" {
-		return int64(value * math.Pow(2, 30))
-	} else if unit == "TiB" {
-		return int64(value * math.Pow(2, 40))
-	} else if unit == "B" {
+	switch unit {
+	case "B":
 		return int64(value)
-	} else {
+	case "KB":
+		return int64(value * math.Pow(10, 3))
+	case "MB":
+		return int64(value * math.Pow(10, 6))
+	case "GB":
+		return int64(value * math.Pow(10, 9))
+	case "TB":
+		return int64(value * math.Pow(10, 12))
+	case "KiB":
+		return int64(value * math.Pow(2, 10))
+	case "MiB":
+		return int64(value * math.Pow(2, 20))
+	case "GiB":
+		return int64(value * math.Pow(2, 30))
+	case "TiB":
+		return int64(value * math.Pow(2, 40))
+	default:
 		return 0
 	}
 }

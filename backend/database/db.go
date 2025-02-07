@@ -127,7 +127,7 @@ func GetIndexerCookies(indexerId int64) string {
 	return result[0]["cookies"].(string)
 }
 
-func GetIndexerUsername(indexerId int64) string {
+func GetIndexerUsername(indexerId interface{}) string {
 
 	query := `SELECT username from credentials where indexer_id = ? `
 	result := ExecuteQuery(query, []interface{}{indexerId})
@@ -135,7 +135,7 @@ func GetIndexerUsername(indexerId int64) string {
 	return result[0]["username"].(string)
 }
 
-func GetIndexerPassword(indexerId int64) string {
+func GetIndexerPassword(indexerId interface{}) string {
 
 	query := `SELECT password from credentials where indexer_id = ? `
 	result := ExecuteQuery(query, []interface{}{indexerId})

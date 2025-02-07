@@ -130,6 +130,38 @@
         }
     },
     {
+        "indexer_name": "AlphaRatio",
+        "abbreviation": "AR",
+        "enabled": false,
+        "login": {
+            "url": "https://alpharatio.cc/login.php",
+            "body": "form_data",
+            "fields": {
+                "username": "username",
+                "password": "password",
+                "extra": {
+                    "login": "Login",
+                    "keeplogged": "1"
+                }
+            }
+        },
+        "credentials": {
+            "method": "prowlarr"
+        },
+        "base_url": "https://alpharatio.cc/",
+        "scraping": {
+            "xpaths": {
+                "user_path": "body > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(4) > ul:nth-of-type(1) > li:nth-of-type(2) > a",
+                "uploaded_amount": "body > div:nth-of-type(1) > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(1) > ul > li:nth-of-type(4)",
+                "downloaded_amount": "body > div:nth-of-type(1) > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(1) > ul > li:nth-of-type(5)",
+                "bonus_points": "body > div:nth-of-type(1) > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(1) > ul > li:nth-of-type(10)",
+                "uploaded_torrents": "body > div:nth-of-type(1) > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(4) > ul > li:nth-of-type(10)",
+                "torrent_comments": "body > div:nth-of-type(1) > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(4) > ul > li:nth-of-type(2)",
+                "forum_posts": "body > div:nth-of-type(1) > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(4) > ul > li:nth-of-type(1)"
+            }
+        }
+    },
+    {
         "indexer_name": "Anthelion",
         "abbreviation": "ANT",
         "enabled": false,
@@ -151,6 +183,7 @@
         "base_url": "https://anthelion.me/",
         "scraping": {
             "xpaths": {
+                "user_path": "body > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > ul > li:nth-of-type(10) > a",
                 "uploaded_amount": "body > div:nth-of-type(1) > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(3) > ul > li:nth-of-type(3)",
                 "downloaded_amount": "body > div:nth-of-type(1) > div:nth-of-type(2) > div > div:nth-of-type(3) > div:nth-of-type(3) > ul > li:nth-of-type(4)",
                 "bonus_points": "body > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(4) > ul:nth-of-type(2) > li:nth-of-type(6) > span > a",
