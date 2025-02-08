@@ -1,6 +1,7 @@
 package indexers
 
 import (
+	"backend/database"
 	"backend/helpers"
 	"errors"
 	"fmt"
@@ -87,5 +88,46 @@ func addCookiesToRequest(request *http.Request, cookieStr string) *http.Request 
 		}
 	}
 	return request
+
+}
+
+func LoginAndSaveCookies(indexer string, username string, password string, twoFaCode string, apiKey string, indexerId interface{}) error {
+	indexerInfo := helpers.GetIndexerInfo(indexer)
+	if indexerInfo.Get("credentials.method").Str == "prowlarr" {
+		credentials := database.GetProwlarrCredentials(indexerId)
+		username = credentials["username"]
+		password = credentials["password"]
+	} else if username == "" {
+		// in case of cookie refresh, the credentials are not given by the user once again
+		username = database.GetIndexerUsername(indexerId)
+		password = database.GetIndexerPassword(indexerId)
+	}
+	if !indexerInfo.Exists() {
+		return errors.New("indexer not found in config")
+	}
+	indexerType := DetermineIndexerType(indexer)
+
+	loginURL := indexerInfo.Get("login.url").String()
+
+	var cookies string
+	if indexerType == "unit3d" {
+		cookies = LoginAndGetCookiesUnit3d(username, password, twoFaCode, loginURL, indexerInfo.Get("domain").Str)
+	} else if indexerType == "gazelleScrape" {
+		cookies = LoginAndGetCookiesGazelleScrape(username, password, twoFaCode, loginURL, indexerInfo)
+	}
+
+	if cookies != "" {
+		insertSQL := `INSERT OR REPLACE INTO credentials (
+		indexer_id, username, password, cookies, api_key
+		) VALUES (?, ?, ?, ?, ?);`
+		args := []interface{}{indexerId, username, password, cookies, apiKey}
+		database.ExecuteQuery(insertSQL, args)
+		// return c.JSON(http.StatusOK, map[string]string{"status": "success"})
+		return nil
+	} else {
+		// return c.JSON(http.StatusUnauthorized, map[string]string{"error": "login_failed"})
+	}
+
+	return errors.New("an error occured getting cookies")
 
 }

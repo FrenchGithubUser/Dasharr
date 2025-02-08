@@ -57,6 +57,12 @@ func ConstructRequestGazelleScrape(prowlarrIndexerConfig gjson.Result, indexerNa
 	baseUrl := prowlarrIndexerConfig.Get("baseUrl").Str
 
 	cookieStr := database.GetIndexerCookies(indexerId)
+	// indexer is not setup yet, credentials are in prowlarr but session cookie needs to be stored in dasharr's db
+	// TODO: move this execution to container initialization
+	if cookieStr == "" {
+		LoginAndSaveCookies(indexerName, "", "", "", "", indexerId)
+		cookieStr = database.GetIndexerCookies(indexerId)
+	}
 	userPath := getUserPathGazelleScrape(baseUrl, cookieStr, indexerName)
 	req, _ := http.NewRequest("GET", baseUrl+userPath, nil)
 	req = addCookiesToRequest(req, cookieStr)
