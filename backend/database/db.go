@@ -124,6 +124,10 @@ func GetIndexerCookies(indexerId int64) string {
 	query := `SELECT cookies from credentials where indexer_id = ? `
 	result := ExecuteQuery(query, []interface{}{indexerId})
 
+	if len(result) == 0 {
+		fmt.Println("indexer credentials not found in db")
+		return ""
+	}
 	return result[0]["cookies"].(string)
 }
 
