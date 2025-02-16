@@ -451,16 +451,16 @@
         "base_url": "https://www.torrentleech.org/",
         "scraping": {
             "xpaths": {
-                "uploaded_amount": "body > div:nth-of-type(6) > div > div > div > div:nth-of-type(3) > div > div > div > table > tbody > tr:nth-of-type(1) > td:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > span",
-                "downloaded_amount": "body > div:nth-of-type(6) > div > div > div > div:nth-of-type(3) > div > div > div > table > tbody > tr:nth-of-type(1) > td:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > span",
-                "bonus_points": "body > div:nth-of-type(3) > div:nth-of-type(2) > div > div:nth-of-type(1) > span:nth-of-type(2) > span:nth-of-type(2) > div:nth-of-type(1) > span > span",
-                "buffer": "body > div:nth-of-type(3) > div:nth-of-type(2) > div > div:nth-of-type(1) > span:nth-of-type(2) > span:nth-of-type(1) > div:nth-of-type(3)",
-                "seeding": "body > div:nth-of-type(3) > div:nth-of-type(2) > div > div:nth-of-type(1) > span:nth-of-type(2) > span:nth-of-type(1) > div:nth-of-type(1)",
-                "leeching": "body > div:nth-of-type(3) > div:nth-of-type(2) > div > div:nth-of-type(1) > span:nth-of-type(2) > span:nth-of-type(1) > div:nth-of-type(2)",
-                "ratio": "body > div:nth-of-type(6) > div > div > div > div:nth-of-type(3) > div > div > div > table > tbody > tr:nth-of-type(1) > td:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(3) > span",
+                "uploaded_amount": "body div:nth-of-type(2) div:nth-of-type(2) div div:nth-of-type(1) span:nth-of-type(2) span:nth-of-type(1) div:nth-of-type(1) span",
+                "downloaded_amount": "body div:nth-of-type(2) div:nth-of-type(2) div div:nth-of-type(1) span:nth-of-type(2) span:nth-of-type(1) div:nth-of-type(2) span",
+                "bonus_points": "body div:nth-of-type(2) div:nth-of-type(2) div div:nth-of-type(1) span:nth-of-type(2) span:nth-of-type(2) div:nth-of-type(1) span span",
+                "buffer": "body div:nth-of-type(2) div:nth-of-type(2) div div:nth-of-type(1) span:nth-of-type(2) span:nth-of-type(1) div:nth-of-type(3)",
+                "seeding": "body div:nth-of-type(2) div:nth-of-type(2) div div:nth-of-type(1) span:nth-of-type(2) span:nth-of-type(1) div:nth-of-type(1)",
+                "leeching": "body div:nth-of-type(2) div:nth-of-type(2) div div:nth-of-type(1) span:nth-of-type(2) span:nth-of-type(1) div:nth-of-type(2)",
+                "ratio": "body div:nth-of-type(2) div:nth-of-type(2) div div:nth-of-type(1) span:nth-of-type(2) span:nth-of-type(1) div:nth-of-type(4)",
                 "warned": "",
-                "torrent_comments": "body > div:nth-of-type(6) > div > div > div > div:nth-of-type(3) > div > div > div > table > tbody > tr:nth-of-type(11) > td:nth-of-type(2)",
-                "class": "body > div:nth-of-type(6) > div > div > div > div:nth-of-type(3) > div > div > div > table > tbody > tr:nth-of-type(5) > td:nth-of-type(2)"
+                "torrent_comments": "body div:nth-of-type(5) div div div div:nth-of-type(3) div div div table tbody tr:nth-of-type(11) td:nth-of-type(2)",
+                "class": "body div:nth-of-type(5) div div div div:nth-of-type(3) div div div table tbody tr:nth-of-type(5) td:nth-of-type(2)"
             }
         }
     }

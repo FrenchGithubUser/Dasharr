@@ -79,7 +79,6 @@ func ProcessIndexerResponseTL(bodyString string, indexerInfo gjson.Result) map[s
 	doc, _ := goquery.NewDocumentFromReader(strings.NewReader(bodyString))
 
 	// fmt.Println(bodyString)
-	fmt.Println(doc.Find("body > div:nth-of-type(6) > div > div > div > div:nth-of-type(3) > div > div > div > table > tbody > tr:nth-of-type(1) > td:nth-of-type(2) > div:nth-of-type(2)").Text())
 	uploadRegexResult := re.FindStringSubmatch(doc.Find(indexerInfo.Get("scraping.xpaths.uploaded_amount").Str).Text())
 	if len(uploadRegexResult) == 0 {
 		fmt.Printf("An error occured while parsing %s's response", indexerInfo.Get("indexer_name").Str)
@@ -97,13 +96,13 @@ func ProcessIndexerResponseTL(bodyString string, indexerInfo gjson.Result) map[s
 	results["buffer"] = helpers.AnyUnitToBytes(cleanBuffer, downloadRegexResult[2])
 
 	bonusPoints := doc.Find(indexerInfo.Get("scraping.xpaths.bonus_points").Str).Text()
-	results["bonus_points"] = strings.ReplaceAll(bonusPoints, " ", "")
+	results["bonus_points"] = strings.ReplaceAll(bonusPoints, "'", "")
 
 	seeding_html := doc.Find(indexerInfo.Get("scraping.xpaths.seeding").Str).Text()
 	results["seeding"] = regexp.MustCompile(`\((\d+)\)`).FindStringSubmatch(seeding_html)[1]
 
 	leeching_html := doc.Find(indexerInfo.Get("scraping.xpaths.leeching").Str).Text()
-	results["seeding"] = regexp.MustCompile(`\((\d+)\)`).FindStringSubmatch(leeching_html)[1]
+	results["leeching"] = regexp.MustCompile(`\((\d+)\)`).FindStringSubmatch(leeching_html)[1]
 
 	ratio_html := doc.Find(indexerInfo.Get("scraping.xpaths.ratio").Str).Text()
 	results["ratio"] = regexp.MustCompile(`(\d+)`).FindStringSubmatch(ratio_html)[1]
@@ -113,8 +112,6 @@ func ProcessIndexerResponseTL(bodyString string, indexerInfo gjson.Result) map[s
 
 	class := doc.Find(indexerInfo.Get("scraping.xpaths.class").Str).Text()
 	results["class"] = class
-
-	fmt.Println(results)
 
 	return results
 }
