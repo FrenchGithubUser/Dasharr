@@ -126,7 +126,7 @@ export default {
   margin: 5px;
   margin-bottom: 10px;
   &.disabled {
-    background-color: rgb(170, 170, 170);
+    background-color: rgb(255, 0, 0) !important;
   }
 }
 .indexer {

@@ -24,6 +24,8 @@ func ConstructIndexerRequest(prowlarrIndexerConfig gjson.Result, indexerName str
 		req = ConstructRequestGazelleScrape(prowlarrIndexerConfig, indexerName, indexerId)
 	} else if indexerType == "MAM" {
 		req = ConstructRequestMAM(prowlarrIndexerConfig)
+	} else if indexerType == "TL" {
+		req = ConstructRequestTL(prowlarrIndexerConfig, indexerName, indexerId)
 	}
 
 	return req
@@ -44,6 +46,8 @@ func ProcessIndexerResponse(response *http.Response, indexerName string) (map[st
 		results = ProcessIndexerResponseGazelleScrape(string(body), indexerInfo)
 	} else if indexerType == "MAM" {
 		results = ProcessIndexerResponseMAM(gjson.Parse(string(body)), indexerInfo)
+	} else if indexerType == "TL" {
+		results = ProcessIndexerResponseTL(string(body), indexerInfo)
 	}
 
 	var err error = nil
@@ -72,6 +76,8 @@ func DetermineIndexerType(indexerName string) string {
 		return "gazelleScrape"
 	} else if contains(indexerName, []string{"MyAnonamouse"}) {
 		return "MAM"
+	} else if contains(indexerName, []string{"TorrentLeech"}) {
+		return "TL"
 	}
 	return "unknown"
 }
@@ -114,6 +120,8 @@ func LoginAndSaveCookies(indexer string, username string, password string, twoFa
 		cookies = LoginAndGetCookiesUnit3d(username, password, twoFaCode, loginURL, indexerInfo.Get("domain").Str)
 	} else if indexerType == "gazelleScrape" {
 		cookies = LoginAndGetCookiesGazelleScrape(username, password, twoFaCode, loginURL, indexerInfo)
+	} else if indexerType == "TL" {
+		cookies = LoginAndGetCookiesTL(username, password, twoFaCode, loginURL, indexerInfo)
 	}
 
 	if cookies != "" {
@@ -128,6 +136,6 @@ func LoginAndSaveCookies(indexer string, username string, password string, twoFa
 		// return c.JSON(http.StatusUnauthorized, map[string]string{"error": "login_failed"})
 	}
 
-	return errors.New("an error occured getting cookies")
+	return errors.New("an error occured getting cookies for indexer " + indexer)
 
 }

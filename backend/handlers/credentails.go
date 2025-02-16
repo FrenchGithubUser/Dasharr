@@ -38,6 +38,7 @@ func SaveCredentials(c echo.Context) error {
 	if loginError == nil {
 		return c.JSON(http.StatusOK, map[string]string{"status": "success"})
 	} else {
+		fmt.Printf(loginError.Error())
 		return c.JSON(http.StatusUnauthorized, map[string]string{"error": "login_failed"})
 	}
 }

@@ -135,7 +135,6 @@
         "enabled": false,
         "login": {
             "url": "https://alpharatio.cc/login.php",
-            "body": "form_data",
             "fields": {
                 "username": "username",
                 "password": "password",
@@ -167,7 +166,6 @@
         "enabled": false,
         "login": {
             "url": "https://anthelion.me/login.php",
-            "body": "form_data",
             "fields": {
                 "username": "username",
                 "password": "password",
@@ -207,7 +205,6 @@
         "domain": "blutopia.cc",
         "login": {
             "url": "https://blutopia.cc/login",
-            "body": "form_data",
             "fields": {
                 "username": "username",
                 "password": "password",
@@ -247,7 +244,6 @@
         "domain": "aither.cc",
         "login": {
             "url": "https://aither.cc/login",
-            "body": "form_data",
             "fields": {
                 "username": "username",
                 "password": "password",
@@ -287,7 +283,6 @@
         "domain": "itatorrents.xyz",
         "login": {
             "url": "https://itatorrents.xyz/login",
-            "body": "form_data",
             "fields": {
                 "username": "username",
                 "password": "password",
@@ -327,7 +322,6 @@
         "domain": "oldtoons.world",
         "login": {
             "url": "https://oldtoons.world/login",
-            "body": "form_data",
             "fields": {
                 "username": "username",
                 "password": "password",
@@ -367,7 +361,6 @@
         "domain": "lst.gg",
         "login": {
             "url": "https://lst.gg/login",
-            "body": "form_data",
             "fields": {
                 "username": "username",
                 "password": "password",
@@ -407,7 +400,6 @@
         "domain": "seedpool.org",
         "login": {
             "url": "https://seedpool.org/login",
-            "body": "form_data",
             "fields": {
                 "username": "username",
                 "password": "password",
@@ -437,6 +429,38 @@
                 "warned": "main article aside section:nth-of-type(2) dl div:nth-of-type(1) dd",
                 "seeding_size": "main article div section:nth-of-type(4) div table tbody tr td:nth-of-type(7)",
                 "freeleech_tokens": "main article aside section:nth-of-type(7) dl div:nth-of-type(1) dd"
+            }
+        }
+    },
+    {
+        "indexer_name": "TorrentLeech",
+        "abbreviation": "TL",
+        "enabled": false,
+        "domain": "torrentleech.org",
+        "login": {
+            "url": "https://www.torrentleech.org/user/account/login/",
+            "fields": {
+                "username": "username",
+                "password": "password",
+                "twoFaCode": ""
+            }
+        },
+        "credentials": {
+            "method": "prowlarr"
+        },
+        "base_url": "https://www.torrentleech.org/",
+        "scraping": {
+            "xpaths": {
+                "uploaded_amount": "body > div:nth-of-type(6) > div > div > div > div:nth-of-type(3) > div > div > div > table > tbody > tr:nth-of-type(1) > td:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > span",
+                "downloaded_amount": "body > div:nth-of-type(6) > div > div > div > div:nth-of-type(3) > div > div > div > table > tbody > tr:nth-of-type(1) > td:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > span",
+                "bonus_points": "body > div:nth-of-type(3) > div:nth-of-type(2) > div > div:nth-of-type(1) > span:nth-of-type(2) > span:nth-of-type(2) > div:nth-of-type(1) > span > span",
+                "buffer": "body > div:nth-of-type(3) > div:nth-of-type(2) > div > div:nth-of-type(1) > span:nth-of-type(2) > span:nth-of-type(1) > div:nth-of-type(3)",
+                "seeding": "body > div:nth-of-type(3) > div:nth-of-type(2) > div > div:nth-of-type(1) > span:nth-of-type(2) > span:nth-of-type(1) > div:nth-of-type(1)",
+                "leeching": "body > div:nth-of-type(3) > div:nth-of-type(2) > div > div:nth-of-type(1) > span:nth-of-type(2) > span:nth-of-type(1) > div:nth-of-type(2)",
+                "ratio": "body > div:nth-of-type(6) > div > div > div > div:nth-of-type(3) > div > div > div > table > tbody > tr:nth-of-type(1) > td:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(3) > span",
+                "warned": "",
+                "torrent_comments": "body > div:nth-of-type(6) > div > div > div > div:nth-of-type(3) > div > div > div > table > tbody > tr:nth-of-type(11) > td:nth-of-type(2)",
+                "class": "body > div:nth-of-type(6) > div > div > div > div:nth-of-type(3) > div > div > div > table > tbody > tr:nth-of-type(5) > td:nth-of-type(2)"
             }
         }
     }
