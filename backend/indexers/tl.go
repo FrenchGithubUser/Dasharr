@@ -96,7 +96,9 @@ func ProcessIndexerResponseTL(bodyString string, indexerInfo gjson.Result) map[s
 	results["buffer"] = helpers.AnyUnitToBytes(cleanBuffer, downloadRegexResult[2])
 
 	bonusPoints := doc.Find(indexerInfo.Get("scraping.xpaths.bonus_points").Str).Text()
-	results["bonus_points"] = strings.ReplaceAll(bonusPoints, "'", "")
+	bonusPoints = strings.ReplaceAll(bonusPoints, "'", "")
+	bonusPoints = strings.ReplaceAll(bonusPoints, ",", ".")
+	results["bonus_points"] = strings.ReplaceAll(bonusPoints, " ", "")
 
 	seeding_html := doc.Find(indexerInfo.Get("scraping.xpaths.seeding").Str).Text()
 	results["seeding"] = regexp.MustCompile(`\((\d+)\)`).FindStringSubmatch(seeding_html)[1]
