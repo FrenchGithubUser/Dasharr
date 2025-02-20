@@ -154,11 +154,11 @@ func ProcessIndexerResponseGazelleScrape(bodyString string, indexerInfo gjson.Re
 	// leeching := doc.Find(indexerInfo.Get("scraping.xpaths.leeching").Str).Text()
 	// results["leeching"] = leeching
 
-	ratioXpath := indexerInfo.Get("scraping.xpaths.seeding_size")
-	if ratioXpath.Exists() {
-		ratio := doc.Find(indexerInfo.Get(ratioXpath.Str).Str).Text()
-		results["ratio"] = ratio
-	}
+	// ratioXpath := indexerInfo.Get("scraping.xpaths.ratio")
+	// if ratioXpath.Exists() {
+	// 	ratio := doc.Find(indexerInfo.Get(ratioXpath.Str).Str).Text()
+	// 	results["ratio"] = ratio
+	// }
 
 	torrent_comments := extractNumberRegex.FindString(doc.Find(indexerInfo.Get("scraping.xpaths.torrent_comments").Str).Text())
 	results["torrent_comments"] = torrent_comments

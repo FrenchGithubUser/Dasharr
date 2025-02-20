@@ -26,6 +26,8 @@ func ConstructIndexerRequest(prowlarrIndexerConfig gjson.Result, indexerName str
 		req = ConstructRequestMAM(prowlarrIndexerConfig)
 	} else if indexerType == "TL" {
 		req = ConstructRequestTL(prowlarrIndexerConfig, indexerName, indexerId)
+	} else if indexerType == "luminance" {
+		req = ConstructRequestLuminance(prowlarrIndexerConfig, indexerName, indexerId)
 	}
 
 	return req
@@ -48,6 +50,8 @@ func ProcessIndexerResponse(response *http.Response, indexerName string) (map[st
 		results = ProcessIndexerResponseMAM(gjson.Parse(string(body)), indexerInfo)
 	} else if indexerType == "TL" {
 		results = ProcessIndexerResponseTL(string(body), indexerInfo)
+	} else if indexerType == "luminance" {
+		results = ProcessIndexerResponseLuminance(string(body), indexerInfo)
 	}
 
 	var err error = nil
@@ -78,6 +82,8 @@ func DetermineIndexerType(indexerName string) string {
 		return "MAM"
 	} else if contains(indexerName, []string{"TorrentLeech"}) {
 		return "TL"
+	} else if contains(indexerName, []string{"Empornium"}) {
+		return "luminance"
 	}
 	return "unknown"
 }
@@ -99,10 +105,12 @@ func addCookiesToRequest(request *http.Request, cookieStr string) *http.Request 
 
 func LoginAndSaveCookies(indexer string, username string, password string, twoFaCode string, apiKey string, indexerId interface{}) error {
 	indexerInfo := helpers.GetIndexerInfo(indexer)
+	var cookiesProwlarr string
 	if indexerInfo.Get("credentials.method").Str == "prowlarr" {
 		credentials := database.GetProwlarrCredentials(indexerId)
 		username = credentials["username"]
 		password = credentials["password"]
+		cookiesProwlarr = credentials["cookie"]
 	} else if username == "" {
 		// in case of cookie refresh, the credentials are not given by the user once again
 		username = database.GetIndexerUsername(indexerId)
@@ -122,6 +130,8 @@ func LoginAndSaveCookies(indexer string, username string, password string, twoFa
 		cookies = LoginAndGetCookiesGazelleScrape(username, password, twoFaCode, loginURL, indexerInfo)
 	} else if indexerType == "TL" {
 		cookies = LoginAndGetCookiesTL(username, password, twoFaCode, loginURL, indexerInfo)
+	} else if indexerType == "luminance" {
+		cookies = LoginAndGetCookiesLuminance(username, password, cookiesProwlarr, loginURL, indexerInfo)
 	}
 
 	if cookies != "" {

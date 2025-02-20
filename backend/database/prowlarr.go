@@ -24,16 +24,19 @@ func GetProwlarrCredentials(indexerId interface{}) map[string]string {
 
 	usernamePath := "username"
 	passwordPath := "password"
+	cookiePath := "cookie"
 
 	// sometimes the username/password dont have the same key in the prowlarr db
 	if !jsonResult.Get(usernamePath).Exists() {
 		usernamePath = "extraFieldData." + usernamePath
 		passwordPath = "extraFieldData." + passwordPath
+		cookiePath = "extraFieldData." + cookiePath
 	}
 
 	credentials := map[string]string{
 		"username": jsonResult.Get(usernamePath).String(),
 		"password": jsonResult.Get(passwordPath).String(),
+		"cookie":   jsonResult.Get(cookiePath).String(), // sometimes empty
 	}
 
 	return credentials

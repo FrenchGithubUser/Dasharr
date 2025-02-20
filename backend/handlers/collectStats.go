@@ -57,6 +57,7 @@ func CollectStats(c echo.Context) error {
 func processIndexerProwlarr(prowlarrIndexerConfig []interface{}, db *sql.DB) bool {
 	indexerName := prowlarrIndexerConfig[1].(string)
 	indexerName = strings.TrimSuffix(indexerName, " (API)")
+	indexerName = strings.TrimSuffix(indexerName, "2FA")
 
 	if helpers.GetIndexerInfo(indexerName).Get("enabled").Bool() {
 

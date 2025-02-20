@@ -55,6 +55,7 @@ func SavedCredentials(c echo.Context) error {
 	for _, obj := range results {
 		if id, ok := obj["indexer_id"].(int64); ok {
 			obj["indexer_name"] = strings.TrimSuffix(indexerNames[fmt.Sprint(id)], " (API)")
+			obj["indexer_name"] = strings.TrimSuffix(indexerNames[fmt.Sprint(id)], "2FA")
 		}
 	}
 	return c.JSON(http.StatusOK, results)

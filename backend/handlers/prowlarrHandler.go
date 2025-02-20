@@ -27,6 +27,7 @@ func getProwlarrIndexerIdsFromDB() map[string]string {
 		var id, name string
 		indexers.Scan(&id, &name)
 		result[id] = strings.TrimSuffix(name, " (API)")
+		result[id] = strings.TrimSuffix(result[id], "2FA")
 	}
 	return result
 
