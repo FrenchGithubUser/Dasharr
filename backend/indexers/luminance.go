@@ -250,7 +250,7 @@ func ProcessIndexerResponseLuminance(bodyString string, indexerInfo gjson.Result
 	// warned, _ := strconv.Atoi(doc.Find(indexerInfo.Get("scraping.xpaths.warned").Str).Text())
 	// results["warned"] = warned > 0
 
-	fmt.Println(results)
+	// fmt.Println(results)
 
 	return results
 }
