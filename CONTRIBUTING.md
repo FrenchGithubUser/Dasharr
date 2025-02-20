@@ -13,6 +13,7 @@ Thanks for wanting to contribute to Dasharr !
 Looking for something to do ?
 
 - Many indexers are still to be added
+- Issues with the label "PR Welcome"
 - Some indexer logos are missing
 - Task tracker : https://github.com/users/FrenchGithubUser/projects/1
 
