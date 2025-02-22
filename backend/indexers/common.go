@@ -74,7 +74,7 @@ func DetermineIndexerType(indexerName string) string {
 
 	if contains(indexerName, []string{"Orpheus", "Redacted", "GazelleGames", "BroadcasTheNet"}) {
 		return "gazelleApi"
-	} else if contains(indexerName, []string{"Blutopia", "Aither", "ItaTorrents", "Oldtoons", "LST", "seedpool", "FearNoPeer"}) {
+	} else if contains(indexerName, []string{"Blutopia", "Aither", "ItaTorrents", "Oldtoons", "LST", "seedpool", "FearNoPeer", "Upload.CX"}) {
 		return "unit3d"
 	} else if contains(indexerName, []string{"Anthelion", "AlphaRatio"}) {
 		return "gazelleScrape"
