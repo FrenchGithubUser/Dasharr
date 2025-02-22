@@ -539,6 +539,45 @@
                 "invited": "body div:nth-of-type(2) div:nth-of-type(2) div div:nth-of-type(2) div:nth-of-type(10) ul li:nth-of-type(17)",
                 "seeding_size": "body div:nth-of-type(2) div:nth-of-type(2) div div:nth-of-type(2) div:nth-of-type(10) ul li:nth-of-type(12)"
             }
+    },
+    {
+        "indexer_name": "Upload.CX",
+        "abbreviation": "ULCX",
+        "enabled": false,
+        "domain": "upload.cx",
+        "login": {
+            "url": "https://upload.cx/login",
+            "fields": {
+                "username": "username",
+                "password": "password",
+                "twoFaCode": "",
+                "extra": {
+                    "_username": ""
+                }
+            }
+        },
+        "credentials": {
+            "method": "built_in"
+        },
+        "base_url": "hhttps://upload.cx/",
+        "scraping": {
+            "xpaths": {
+                "uploaded_amount": "main article aside section:nth-of-type(5) dl div:nth-of-type(4) dd",
+                "downloaded_amount": "main article aside section:nth-of-type(5) dl div:nth-of-type(5) dd",
+                "buffer": "main article aside section:nth-of-type(5) dl div:nth-of-type(3) dd",
+                "bonus_points": "main article aside section:nth-of-type(7) dl div:nth-of-type(1) dd",
+                "uploaded_torrents": "main article aside section:nth-of-type(4) dl div:nth-of-type(1) dd",
+                "snatched": "main article aside section:nth-of-type(4) dl div:nth-of-type(3) dd",
+                "seeding": "main article aside section:nth-of-type(4) dl div:nth-of-type(4) dd",
+                "leeching": "main article aside section:nth-of-type(4) dl div:nth-of-type(5) dd",
+                "ratio": "main article aside section:nth-of-type(5) dl div:nth-of-type(1) dd",
+                "torrent_comments": "main article aside section:nth-of-type(9) dl div:nth-of-type(2) dd",
+                "forum_posts": "main article aside section:nth-of-type(10) dl div:nth-of-type(2) dd",
+                "warned": "main article aside section:nth-of-type(2) dl div:nth-of-type(1) dd",
+                "seeding_size": "main article aside section:nth-of-type(3) dl div:nth-of-type(3) dd",
+                "freeleech_tokens": "main article aside section:nth-of-type(8) dl div:nth-of-type(1) dd"
+            }
         }
+        
     }
 ]
