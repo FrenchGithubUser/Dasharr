@@ -541,7 +541,7 @@
             }
     },
     {
-        "indexer_name": "Upload.CX",
+        "indexer_name": "upload.cx",
         "abbreviation": "ULCX",
         "enabled": false,
         "domain": "upload.cx",
