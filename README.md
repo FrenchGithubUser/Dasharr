@@ -40,6 +40,7 @@ We often times don't realize the evolution of the stats on torrent indexers, thi
  * RED
  * seedpool
  * TL (2FA not working : https://github.com/FrenchGithubUser/Dasharr/issues/10)
+ * ULCX
 
 </details>
 
